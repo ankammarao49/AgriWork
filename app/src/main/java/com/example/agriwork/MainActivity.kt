@@ -45,7 +45,7 @@ fun AgriWorkHome() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Welcome to AgriWork", fontSize = 28.sp, textAlign = TextAlign.Center)
+        Text("Welcome to AgriWorkkdfklsajklk", fontSize = 28.sp, textAlign = TextAlign.Center)
         Spacer(Modifier.height(16.dp))
         Button(onClick = { /* TODO: Future action */ }) {
             Text("Get Started")
