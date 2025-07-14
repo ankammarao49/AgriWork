@@ -16,6 +16,14 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.agriwork.ui.theme.AgriWorkTheme
 import com.example.agriwork.ui.theme.Poppins
+import com.google.firebase.auth.FirebaseAuth
+
+fun logout(navController: NavController) {
+    FirebaseAuth.getInstance().signOut()
+    navController.navigate("auth") {
+        popUpTo(0) // Clears backstack so back press won’t return to home
+    }
+}
 
 @Composable
 fun AgriWorkHome(navController: NavController) {
@@ -50,6 +58,12 @@ fun AgriWorkHome(navController: NavController) {
                         lineHeight = 16.sp
                     )
                 )
+            }
+
+            Button(onClick = {
+                logout(navController)
+            }) {
+                Text("Logout")
             }
 
             Button(

@@ -9,49 +9,48 @@ import androidx.compose.ui.unit.sp
 import com.example.agriwork.R
 
 val Poppins = FontFamily(
-//    Font(R.font.poppins_light, FontWeight.Light),
+    Font(R.font.poppins_thin, FontWeight.Thin),
+    Font(R.font.poppins_extralight, FontWeight.ExtraLight),
+    Font(R.font.poppins_light, FontWeight.Light),
     Font(R.font.poppins_regular, FontWeight.Normal),
-//    Font(R.font.poppins_medium, FontWeight.Medium),
-//    Font(R.font.poppins_semibold, FontWeight.SemiBold),
-//    Font(R.font.poppins_bold, FontWeight.Bold),
-    Font(R.font.poppins_black, FontWeight.Black),
+    Font(R.font.poppins_medium, FontWeight.Medium),
+    Font(R.font.poppins_semibold, FontWeight.SemiBold),
+    Font(R.font.poppins_bold, FontWeight.Bold),
+    Font(R.font.poppins_extrabold, FontWeight.ExtraBold),
+    Font(R.font.poppins_black, FontWeight.Black)
 )
 
 // Set of Material typography styles to start with
+
 val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
+    displayLarge = TextStyle(
+        fontFamily = Poppins,
+        fontWeight = FontWeight.Black,
+        fontSize = 32.sp,
+        lineHeight = 40.sp
     ),
     titleLarge = TextStyle(
         fontFamily = Poppins,
         fontWeight = FontWeight.Bold,
-        fontSize = 24.sp
+        fontSize = 24.sp,
+        lineHeight = 32.sp
+    ),
+    bodyLarge = TextStyle(
+        fontFamily = Poppins,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        lineHeight = 24.sp
     ),
     bodyMedium = TextStyle(
         fontFamily = Poppins,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Light,
         fontSize = 14.sp,
-        lineHeight = 14.sp
-    )
-
-    /* Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
+        lineHeight = 20.sp
     ),
     labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = Poppins,
         fontWeight = FontWeight.Medium,
         fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
+        lineHeight = 16.sp
     )
-    */
 )
