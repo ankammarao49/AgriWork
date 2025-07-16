@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.agriwork.ui.components.PrimaryButton
 import com.example.agriwork.ui.theme.Poppins
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 @Composable
@@ -98,7 +99,7 @@ fun CreateProfileScreen(
                 role = role,
                 onSubmit = {
                     showPreview = true
-//                        onProfileCreated(name, location, role!!)
+                    onProfileCreated(name, location, role!!)
                 },
                 snackbarHostState = snackbarHostState,
                 modifier = Modifier
@@ -249,7 +250,29 @@ fun SubmitProfileButton(
                     name.isBlank() -> snackbarHostState.showSnackbar("Please enter your name")
                     location.isBlank() -> snackbarHostState.showSnackbar("Please enter your location")
                     role == null -> snackbarHostState.showSnackbar("Please select your role")
-                    else -> onSubmit()
+                    else -> {
+                        val userPhone = FirebaseAuth.getInstance().currentUser?.phoneNumber ?: return@launch
+
+                        val user = AppUser(
+                            name = name,
+                            location = location,
+                            role = role,
+                            mobileNumber = userPhone
+                        )
+
+                        saveUserToFirestore(
+                            user = user,
+                            onSuccess = {
+                                onSubmit()
+                            },
+                            onFailure = {
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar("Something went wrong. Please try again.")
+                                }
+                            }
+
+                        )
+                    }
                 }
             }
         }
