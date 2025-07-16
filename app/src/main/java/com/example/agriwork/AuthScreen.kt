@@ -48,7 +48,6 @@ fun AuthScreen(
     val context = LocalContext.current
     val activity = context as Activity
 
-    val countryCodes = listOf("+91", "+1", "+44", "+61")
     var showDialog by remember { mutableStateOf(false) }
     var selectedCode by remember { mutableStateOf("+91") }
     val countries = remember { countryList }
@@ -87,7 +86,7 @@ fun AuthScreen(
             )
             {
                 Text(
-                    text = "Phone Login",
+                    text = "Let’s get started!",
                     fontFamily = Poppins,
                     fontWeight = FontWeight.Black,
                     fontSize = 24.sp
@@ -130,22 +129,25 @@ fun AuthScreen(
                         singleLine = true,
                         enabled = !isOtpSent
                     )
-
-                    if (isOtpSent) {
-                        OutlinedTextField(
-                            value = otp,
-                            onValueChange = {
-                                if (it.length <= 6) otp = it
-                            },
-                            label = { Text("Enter OTP") },
-                            keyboardOptions = KeyboardOptions.Default.copy(
-                                keyboardType = KeyboardType.Number
-                            ),
-                            singleLine = true
-                        )
-                    }
                 }
 
+                Spacer(modifier = Modifier.height(16.dp))
+
+                if (isOtpSent) {
+                    OutlinedTextField(
+                        value = otp,
+                        onValueChange = {
+                            if (it.length <= 6) otp = it
+                        },
+                        label = { Text("Enter OTP") },
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Number
+                        ),
+                        singleLine = true,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                }
 
                 if (showDialog) {
                     CountryCodeDialog(
@@ -162,15 +164,17 @@ fun AuthScreen(
                 Spacer(modifier = Modifier.height(20.dp))
             }
 
+            if (isLoading) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 if (isOtpSent) {
-                    if (isLoading) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        CircularProgressIndicator()
-                    }
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
                     PrimaryButton(
                         onClick = {
                             if (otp.length == 6 && verificationId != null) {

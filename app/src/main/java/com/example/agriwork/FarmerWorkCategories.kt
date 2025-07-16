@@ -14,12 +14,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.navigation.NavController
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun FarmerCategoriesScreen() {
+fun FarmerCategoriesScreen(navController: NavController) {
     val workCategories = listOf(
-        "Harvesting", "Planting Seeds", "Weeding", "Watering",
-        "Plowing", "Fertilizing"
+        "Harvesting", "Planting Seeds", "Planting Plants", "Weeding", "Watering",
+        "Plowing", "Fertilizing", "Digging"
     )
 
     Column(
@@ -31,11 +33,22 @@ fun FarmerCategoriesScreen() {
             text = "Works You’re Hiring For",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF2E7D32),
-            modifier = Modifier.padding(bottom = 24.dp)
+            color = Color(0xFF2E7D32)
         )
 
-        LazyVerticalGrid(
+        TextButton(onClick = {
+            FirebaseAuth.getInstance().signOut()
+            navController.navigate("auth") {
+                popUpTo(0) { inclusive = true }
+            }
+        }) {
+            Text("Logout", color = Color.Red)
+        }
+
+    Spacer(modifier = Modifier.height(24.dp))
+
+
+    LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -59,10 +72,4 @@ fun FarmerCategoriesScreen() {
             }
         )
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun FarmerCategoriesScreenPreview() {
-    FarmerCategoriesScreen()
 }

@@ -11,3 +11,11 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val PureBlack = Color.Black
+
+val OliveGreen = Color(0xFF6B8E23)
+
+val DarkerOlive = Color(0xFF556B2F)
+
+val OceanMist = Color(0xFF8DBCC7)
+
+val SlateGray = Color(0xFF6B7280)

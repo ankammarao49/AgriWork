@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
-import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -32,36 +31,60 @@ fun AgriWorkAppContent(navController: NavHostController) {
         )
     }
 
-    NavHost(navController = navController, startDestination = "entry") {
-        composable("entry") {
+    NavHost(navController = navController, startDestination = "entrydecider") {
+        composable("entrydecider") {
             LaunchedEffect(Unit) {
                 val user = FirebaseAuth.getInstance().currentUser
                 if (user != null) {
-                    navController.navigate("home") {
-                        popUpTo("entry") { inclusive = true }
+                    navController.navigate("createprofile") {
+                        popUpTo("entrydecider") { inclusive = true }
                     }
                 } else {
-                    navController.navigate("auth") {
-                        popUpTo("entry") { inclusive = true }
+                    navController.navigate("entry") {
+                        popUpTo("entrydecider") { inclusive = true }
                     }
                 }
             }
         }
 
+        composable("entry") {
+            EntryScreen(
+                onGetStarted = {
+                    navController.navigate("auth") {
+                        popUpTo("entry") { inclusive = true }
+                    }
+                }
+            )
+        }
+
         composable("auth") {
             AuthScreen(
                 onLoginSuccess = {
-                    navController.navigate("home") {
+                    navController.navigate("creteprofile") {
                         popUpTo("auth") { inclusive = true }
                     }
                 }
             )
         }
 
-        composable("home") { AgriWorkHome(navController) }
-        composable("login") { LoginScreen(navController) }
-        composable("farmerworkcategories") { FarmerCategoriesScreen() }
+        composable("createprofile") {
+            CreateProfileScreen { name, location, role ->
+                // TODO: Save the user data to your database here (e.g., Firestore or Realtime DB)
+
+                // Then navigate to main screen (e.g., farmer categories)
+                navController.navigate("farmerworkcategories") {
+                    popUpTo("createprofile") { inclusive = true }
+                }
+            }
+        }
+
+        composable("farmerworkcategories") {
+            FarmerCategoriesScreen(navController)
+        }
+
+        composable("worksavailable") { WorksAvailableScreen() }
     }
+
 }
 
 class MainActivity : ComponentActivity() {
@@ -72,7 +95,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AgriWorkTheme {
-                val navController: NavHostController = rememberNavController()
+                val navController = rememberNavController()
                 Surface(modifier = Modifier.fillMaxSize()) {
                     AgriWorkAppContent(navController)
                 }

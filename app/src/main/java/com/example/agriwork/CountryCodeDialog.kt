@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-
+import com.example.agriwork.ui.components.PrimaryButton
 
 
 @Composable
@@ -72,12 +72,11 @@ fun CountryCodeDialog(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                Button(
+                PrimaryButton(
                     onClick = onDismiss,
-                    modifier = Modifier.align(Alignment.End)
-                ) {
-                    Text("Close")
-                }
+                    modifier = Modifier.align(Alignment.End),
+                    text = "Close"
+                )
             }
         }
     }
