@@ -18,14 +18,75 @@ import com.example.agriwork.ui.theme.Poppins
 
 @Composable
 fun WorksAvailableScreen() {
-    val workItems = listOf(
-        Work("Ramu", "Harvest Tomatoes", 3, 1.5, 4, 2, "Farm 12, Village A"),
-        Work("Sita", "Plow Field", 2, 2.0, 3, 1, "Plot B, Sector 3"),
-        Work("John", "Irrigate Crops", 4, 3.5, 5, 3, "Greenland Farms"),
-        Work("Lalitha", "Collect Straw", 1, 1.0, 2, 1, "Pasture Hill"),
-        Work("Krishna", "Seed Rice", 3, 2.8, 4, 2, "Valley East"),
-        Work("Mohan", "Spray Fertilizer", 2, 1.2, 3, 1, "Zone 5, Sector D")
+    val sampleUsers = listOf(
+        AppUser(name = "Akhil", role = "worker", location = "Village A", mobileNumber = "9876543210"),
+        AppUser(name = "Ravi", role = "worker", location = "Sector 3", mobileNumber = "8765432109"),
+        AppUser(name = "Meena", role = "worker", location = "Greenland", mobileNumber = "7654321098"),
     )
+
+    val workItems = listOf(
+        Work(
+            farmerName = "Ramu",
+            workTitle = "Harvest Tomatoes",
+            daysRequired = 3,
+            acres = 1.5,
+            workersNeeded = 4,
+            location = "Farm 12, Village A",
+            workersSelected = listOf(sampleUsers[0], sampleUsers[1]),
+            workersApplied = listOf(sampleUsers[2])
+        ),
+        Work(
+            farmerName = "Sita",
+            workTitle = "Plow Field",
+            daysRequired = 2,
+            acres = 2.0,
+            workersNeeded = 3,
+            location = "Plot B, Sector 3",
+            workersSelected = listOf(sampleUsers[1]),
+            workersApplied = listOf(sampleUsers[0], sampleUsers[2])
+        ),
+        Work(
+            farmerName = "John",
+            workTitle = "Irrigate Crops",
+            daysRequired = 4,
+            acres = 3.5,
+            workersNeeded = 5,
+            location = "Greenland Farms",
+            workersSelected = null,
+            workersApplied = listOf(sampleUsers[0])
+        ),
+        Work(
+            farmerName = "Lalitha",
+            workTitle = "Collect Straw",
+            daysRequired = 1,
+            acres = 1.0,
+            workersNeeded = 2,
+            location = "Pasture Hill",
+            workersSelected = null,
+            workersApplied = null
+        ),
+        Work(
+            farmerName = "Krishna",
+            workTitle = "Seed Rice",
+            daysRequired = 3,
+            acres = 2.8,
+            workersNeeded = 4,
+            location = "Valley East",
+            workersSelected = listOf(sampleUsers[2]),
+            workersApplied = listOf(sampleUsers[0], sampleUsers[1])
+        ),
+        Work(
+            farmerName = "Mohan",
+            workTitle = "Spray Fertilizer",
+            daysRequired = 2,
+            acres = 1.2,
+            workersNeeded = 3,
+            location = "Zone 5, Sector D",
+            workersSelected = listOf(sampleUsers[0]),
+            workersApplied = emptyList()
+        )
+    )
+
 
 
     Column(
@@ -49,7 +110,7 @@ fun WorksAvailableScreen() {
                     daysRequired = work.daysRequired,
                     acres = work.acres,
                     workersNeeded = work.workersNeeded,
-                    workersSelected = work.workersSelected,
+                    noOfWorkersSelected = work.workersSelected?.size ?: 0,
                     location = work.location
                 )
             }
@@ -59,14 +120,19 @@ fun WorksAvailableScreen() {
 
 // Data class to model work details
 data class Work(
-    val farmerName: String,
-    val workTitle: String,
-    val daysRequired: Int,
-    val acres: Double,
-    val workersNeeded: Int,
-    val workersSelected: Int,
-    val location: String
-)
+    val farmerName: String = "",
+    val workTitle: String = "",
+    val daysRequired: Int = 0,
+    val acres: Double = 0.0,
+    val workersNeeded: Int = 0,
+    val workersSelected: List<AppUser>? = null,
+    val workersApplied: List<AppUser>? = null,
+    val location: String = "",
+) {
+    val noOfWorkersSelected: Int
+        get() = workersSelected?.size ?: 0
+}
+
 
 @Composable
 fun WorkShowCard(
@@ -76,7 +142,7 @@ fun WorkShowCard(
     daysRequired: Int,
     acres: Double,
     workersNeeded: Int,
-    workersSelected: Int,
+    noOfWorkersSelected: Int,
     location: String,
     onApplyClick: () -> Unit = {}
 ) {
@@ -146,7 +212,7 @@ fun WorkShowCard(
                         color = Color.DarkGray
                     )
                     Text(
-                        text = "$workersSelected / $workersNeeded workers",
+                        text = "$noOfWorkersSelected / $workersNeeded workers",
                         fontSize = 14.sp,
                         fontFamily = Poppins,
                         color = Color.DarkGray

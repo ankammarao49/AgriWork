@@ -19,3 +19,5 @@ val DarkerOlive = Color(0xFF556B2F)
 val OceanMist = Color(0xFF8DBCC7)
 
 val SlateGray = Color(0xFF6B7280)
+
+val SoftGray = Color(0xFFF2F2F2)

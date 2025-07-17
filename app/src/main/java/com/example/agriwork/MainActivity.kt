@@ -105,7 +105,7 @@ fun AgriWorkAppContent(navController: NavHostController) {
         }
 
         composable("userprofile") {
-            UserProfileScreen(
+            HomeScreen(
                 onLogout = {
                     navController.navigate("entry") {
                         popUpTo("userprofile") { inclusive = true }
