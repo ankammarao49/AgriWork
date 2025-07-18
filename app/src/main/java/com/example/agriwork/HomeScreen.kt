@@ -4,6 +4,7 @@ import GreetingWithName
 import LogoutConfirmationDialog
 import UserProfileDrawer
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
@@ -96,16 +97,26 @@ fun HomeScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(horizontal = 14.dp, vertical = 5.dp)
         ) {
             // Top App Bar as first scrollable item
             item {
                 TopAppBar(
                     title = { Text("Home") },
                     navigationIcon = {
-                        IconButton(onClick = {
-                            scope.launch { drawerState.open() }
-                        }) {
-                            Icon(Icons.Default.Person, contentDescription = "Open Drawer")
+                        IconButton(
+                            onClick = {
+                                scope.launch { drawerState.open() }
+                            },
+                            modifier = Modifier
+                                .background(Color.Black, shape = CircleShape)
+                                .size(40.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Person,
+                                contentDescription = "Open Drawer",
+                                tint = Color.White,
+                                modifier = Modifier.size(30.dp))
                         }
                     }
                 )
@@ -169,8 +180,8 @@ fun HomeScreenContent(
 
     Column(
         modifier = modifier
-            .padding(24.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp, vertical = 24.dp),
     )
     {
         Text(
@@ -219,6 +230,24 @@ fun FarmerHomeContent() {
         "Tree Planting",
         "Farm Security Watch"
     )
+// Work state
+    val context = LocalContext.current
+    var workList by remember { mutableStateOf<List<Work>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(true) }
+    var error by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(Unit) {
+        fetchAllWorksFromFirestore(
+            onSuccess = {
+                workList = it
+                isLoading = false
+            },
+            onFailure = {
+                error = it.message
+                isLoading = false
+            }
+        )
+    }
 
 
     var showAll by remember { mutableStateOf(false) }
@@ -228,24 +257,17 @@ fun FarmerHomeContent() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 10.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+            .padding(vertical = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(25.dp)
     ) {
         PrimaryButton(
             onClick = { /* TODO: Navigate to Find Workers screen */ },
             text = "Post a Work"
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
         HorizontalDivider()
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-
         Text("Work Categories", fontFamily = Poppins)
-
-        Spacer(modifier = Modifier.height(8.dp))
 
         categoriesToShow.forEach { category ->
             Card(
@@ -263,7 +285,7 @@ fun FarmerHomeContent() {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(30.dp),
+                        .padding(25.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
@@ -298,8 +320,8 @@ fun FarmerHomeContent() {
         OutlinedButton(
             onClick = { showAll = !showAll },
             modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 12.dp),
+                .align(Alignment.CenterHorizontally)
+                .padding(top = 12.dp),
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = Color(0xFF113F67)
             ),
@@ -308,22 +330,38 @@ fun FarmerHomeContent() {
             Text(text = if (showAll) "Show Less" else "See More")
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
         HorizontalDivider()
 
-        Spacer(modifier = Modifier.height(16.dp))
-
         Column(
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
             Text(
                 text = "Available Work",
                 fontFamily = Poppins,
-                modifier = Modifier.padding(bottom = 16.dp)
             )
 
+            Spacer(modifier = Modifier.height(25.dp))
+
+            when {
+                isLoading -> CircularProgressIndicator()
+
+                error != null -> Text("Error: $error", color = Color.Red)
+
+                workList.isEmpty() -> Text("No work available at the moment.")
+
+                else -> (workList).forEach { work ->
+                    WorkShowCard(
+                        farmerName = work.farmerName,
+                        workTitle = work.workTitle,
+                        daysRequired = work.daysRequired,
+                        acres = work.acres,
+                        workersNeeded = work.workersNeeded,
+                        noOfWorkersSelected = work.noOfWorkersSelected,
+                        location = work.location,
+                        onApplyClick = {}
+                    )
+                }
+            }
 
         }
     }
@@ -335,6 +373,39 @@ fun WorkerHomeContent() {
         Button(onClick = { /* TODO: Navigate to Jobs screen */ }) {
             Text("Browse Available Jobs")
         }
+        Button(
+            onClick = {
+                val db = FirebaseFirestore.getInstance()
+
+                val work = Work(
+                    farmerName = "Dhanush",
+                    workTitle = "Harvest Tomatoes",
+                    daysRequired = 3,
+                    acres = 1.5,
+                    workersNeeded = 4,
+                    workersSelected = listOf(
+                        AppUser("Ankammarao", "worker", "Detected Village, District", "+919392460175")
+                    ),
+                    workersApplied = listOf(
+                        AppUser("Daddy", "worker", "Detected Village, District", "+919160725824"),
+                        AppUser("Ankammarao", "worker", "Detected Village, District", "+919392460175")
+                    ),
+                    location = "Detected Village, District"
+                )
+
+                db.collection("works")
+                    .add(work)
+                    .addOnSuccessListener { docRef ->
+                        Log.d("Firestore", "Added with ID: ${docRef.id}")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w("Firestore", "Failed to add", e)
+                    }
+            }
+        ) {
+            Text("Add Test Work")
+        }
+
         // Add more worker-specific UI here later
     }
 }

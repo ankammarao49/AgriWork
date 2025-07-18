@@ -70,8 +70,7 @@ fun UserProfileDrawer(
 ) {
     ModalDrawerSheet (
         drawerShape = RectangleShape,
-        modifier =  Modifier
-            .background(MaterialTheme.colorScheme.background),
+        drawerContainerColor = MaterialTheme.colorScheme.surface
     ){
         Column(
             modifier = Modifier.fillMaxHeight()

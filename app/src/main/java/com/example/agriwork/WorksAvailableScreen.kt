@@ -15,80 +15,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.agriwork.ui.theme.Poppins
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun WorksAvailableScreen() {
-    val sampleUsers = listOf(
-        AppUser(name = "Akhil", role = "worker", location = "Village A", mobileNumber = "9876543210"),
-        AppUser(name = "Ravi", role = "worker", location = "Sector 3", mobileNumber = "8765432109"),
-        AppUser(name = "Meena", role = "worker", location = "Greenland", mobileNumber = "7654321098"),
-    )
-
-    val workItems = listOf(
-        Work(
-            farmerName = "Ramu",
-            workTitle = "Harvest Tomatoes",
-            daysRequired = 3,
-            acres = 1.5,
-            workersNeeded = 4,
-            location = "Farm 12, Village A",
-            workersSelected = listOf(sampleUsers[0], sampleUsers[1]),
-            workersApplied = listOf(sampleUsers[2])
-        ),
-        Work(
-            farmerName = "Sita",
-            workTitle = "Plow Field",
-            daysRequired = 2,
-            acres = 2.0,
-            workersNeeded = 3,
-            location = "Plot B, Sector 3",
-            workersSelected = listOf(sampleUsers[1]),
-            workersApplied = listOf(sampleUsers[0], sampleUsers[2])
-        ),
-        Work(
-            farmerName = "John",
-            workTitle = "Irrigate Crops",
-            daysRequired = 4,
-            acres = 3.5,
-            workersNeeded = 5,
-            location = "Greenland Farms",
-            workersSelected = null,
-            workersApplied = listOf(sampleUsers[0])
-        ),
-        Work(
-            farmerName = "Lalitha",
-            workTitle = "Collect Straw",
-            daysRequired = 1,
-            acres = 1.0,
-            workersNeeded = 2,
-            location = "Pasture Hill",
-            workersSelected = null,
-            workersApplied = null
-        ),
-        Work(
-            farmerName = "Krishna",
-            workTitle = "Seed Rice",
-            daysRequired = 3,
-            acres = 2.8,
-            workersNeeded = 4,
-            location = "Valley East",
-            workersSelected = listOf(sampleUsers[2]),
-            workersApplied = listOf(sampleUsers[0], sampleUsers[1])
-        ),
-        Work(
-            farmerName = "Mohan",
-            workTitle = "Spray Fertilizer",
-            daysRequired = 2,
-            acres = 1.2,
-            workersNeeded = 3,
-            location = "Zone 5, Sector D",
-            workersSelected = listOf(sampleUsers[0]),
-            workersApplied = emptyList()
-        )
-    )
-
-
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -102,19 +32,6 @@ fun WorksAvailableScreen() {
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            items(workItems) { work ->
-                WorkShowCard(
-                    farmerName = work.farmerName,
-                    workTitle = work.workTitle,
-                    daysRequired = work.daysRequired,
-                    acres = work.acres,
-                    workersNeeded = work.workersNeeded,
-                    noOfWorkersSelected = work.workersSelected?.size ?: 0,
-                    location = work.location
-                )
-            }
-        }
     }
 }
 
@@ -132,7 +49,6 @@ data class Work(
     val noOfWorkersSelected: Int
         get() = workersSelected?.size ?: 0
 }
-
 
 @Composable
 fun WorkShowCard(
@@ -239,4 +155,17 @@ fun WorkShowCard(
             }
         }
     }
+}
+
+fun fetchAllWorksFromFirestore(
+    onSuccess: (List<Work>) -> Unit,
+    onFailure: (Exception) -> Unit
+) {
+    FirebaseFirestore.getInstance().collection("works")
+        .get()
+        .addOnSuccessListener { snapshot ->
+            val works = snapshot.documents.mapNotNull { it.toObject(Work::class.java) }
+            onSuccess(works)
+        }
+        .addOnFailureListener { onFailure(it) }
 }
