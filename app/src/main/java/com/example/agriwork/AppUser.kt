@@ -4,6 +4,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 data class AppUser(
+    val uid: String = "",
     val name: String = "",
     val role: String = "", // either "farmer" or "worker"
     val location: String = "",
@@ -18,11 +19,11 @@ fun saveUserToFirestore(user: AppUser, onSuccess: () -> Unit, onFailure: (Except
         onFailure(Exception("User not authenticated"))
         return
     }
-
+    val userWithUid = user.copy(uid = uid)
     val db = FirebaseFirestore.getInstance()
     db.collection("users")
         .document(uid) // using UID as the document ID
-        .set(user)
+        .set(userWithUid)
         .addOnSuccessListener { onSuccess() }
         .addOnFailureListener { e -> onFailure(e) }
 }

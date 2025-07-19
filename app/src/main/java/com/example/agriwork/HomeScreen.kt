@@ -213,16 +213,17 @@ fun WorkerHomeContent(currentUser: AppUser, categories: List<String>, navControl
         modifier = Modifier.fillMaxSize().padding(vertical = 20.dp),
         verticalArrangement = Arrangement.spacedBy(30.dp)
     ) {
-        PrimaryButton(onClick = {  }, text = "Find a Work")
 
-        HorizontalDivider()
-
-        WorkCategorySection(
-            title = "Work Categories",
-            categories = categories,
-            onCategoryClick = { category ->
-            }
-        )
+//        PrimaryButton(onClick = {  }, text = "Find a Work")
+//
+//        HorizontalDivider()
+//
+//        WorkCategorySection(
+//            title = "Work Categories",
+//            categories = categories,
+//            onCategoryClick = { category ->
+//            }
+//        )
 
         HorizontalDivider()
 

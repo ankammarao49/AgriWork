@@ -113,17 +113,17 @@ fun AvailableWorkSection(currentUser: AppUser)
     var isLoading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
     val workList = remember { mutableStateListOf<Work>() }
+    val availableWorks = remember { mutableStateListOf<Work>() }
+    val appliedWorks = remember { mutableStateListOf<Work>() }
 
     LaunchedEffect(Unit) {
-        fetchAllWorksFromFirestore(
-            onSuccess = {
-                workList.clear()
-                workList.addAll(it)
-                isLoading = false
-            },
-            onFailure = { error = it.message; isLoading = false }
-        )
+        listenToWorks { updatedWorks ->
+            workList.clear()
+            workList.addAll(updatedWorks)
+            isLoading = false
+        }
     }
+
 
     Column {
         Text("Available Work", fontFamily = Poppins, fontWeight = FontWeight.SemiBold)
@@ -135,6 +135,7 @@ fun AvailableWorkSection(currentUser: AppUser)
             workList.isEmpty() -> Text("No work available at the moment.")
             else -> workList.forEach { work ->
                 val hasAlreadyApplied = work.workersApplied?.contains(currentUid) == true
+                val isWorkFull = (work.workersSelected?.size ?: 0) >= work.workersNeeded
                 WorkShowCard(
                     farmerName = work.farmer.name,
                     workTitle = work.workTitle,
@@ -156,7 +157,7 @@ fun AvailableWorkSection(currentUser: AppUser)
                             }
                         }
                     },
-                    applyButtonEnabled = !hasAlreadyApplied
+                    applyButtonEnabled = !hasAlreadyApplied && !isWorkFull
                 )
             }
         }
@@ -323,4 +324,22 @@ fun applyToWork(workId: String, onSuccess: () -> Unit) {
     }.addOnFailureListener { exception ->
         Log.e("applyToWork", "Error fetching work: ${exception.message}")
     }
+}
+
+fun listenToWorks(onWorksUpdate: (List<Work>) -> Unit) {
+    val db = Firebase.firestore
+
+    db.collection("works")
+        .addSnapshotListener { snapshot, error ->
+            if (error != null || snapshot == null) {
+                Log.e("Firestore", "Listen failed", error)
+                return@addSnapshotListener
+            }
+
+            val works = snapshot.documents.mapNotNull { doc ->
+                doc.toObject(Work::class.java)?.copy(id = doc.id)
+            }
+
+            onWorksUpdate(works)
+        }
 }
