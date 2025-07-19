@@ -35,7 +35,7 @@ fun AgriWorkAppContent(navController: NavHostController) {
                 if (user != null) {
                     checkIfUserProfileExists(
                         onExists = {
-                            navController.navigate("userprofile") {
+                            navController.navigate("home") {
                                 popUpTo("entrydecider") { inclusive = true }
                             }
                         },
@@ -75,7 +75,7 @@ fun AgriWorkAppContent(navController: NavHostController) {
                 onLoginSuccess = {
                     checkIfUserProfileExists(
                         onExists = {
-                            navController.navigate("userprofile") {
+                            navController.navigate("home") {
                                 popUpTo("auth") { inclusive = true }
                             }
                         },
@@ -98,17 +98,18 @@ fun AgriWorkAppContent(navController: NavHostController) {
         composable("createprofile") {
             CreateProfileScreen { name, location, role ->
                 // TODO: Save user info to Firestore here
-                navController.navigate("userprofile") {
+                navController.navigate("home") {
                     popUpTo("createprofile") { inclusive = true }
                 }
             }
         }
 
-        composable("userprofile") {
+        composable("home") {
             HomeScreen(
+                navController = navController,
                 onLogout = {
                     navController.navigate("entry") {
-                        popUpTo("userprofile") { inclusive = true }
+                        popUpTo("home") { inclusive = true }
                     }
                 }
             )
@@ -118,9 +119,17 @@ fun AgriWorkAppContent(navController: NavHostController) {
             FarmerCategoriesScreen(navController)
         }
 
-        composable("worksavailable") {
-            WorksAvailableScreen()
+
+        composable("creatework") {
+            CreateWorkScreen(navController)
         }
+
+        composable("creatework/{category}") { backStackEntry ->
+            val category = backStackEntry.arguments?.getString("category") ?: ""
+            CreateWorkScreen(navController = navController, category = category)
+        }
+
+
     }
 }
 

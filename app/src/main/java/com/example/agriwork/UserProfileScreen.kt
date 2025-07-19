@@ -52,14 +52,12 @@ fun GreetingWithName(name: String) {
     }
 
     Text(
-        text = "$greeting\n$name",
+        text = "$greeting\n${name}",
         fontFamily = Poppins,
         fontWeight = FontWeight.Bold,
-        maxLines = 2,
         overflow = TextOverflow.Ellipsis,
-        modifier = Modifier.padding(16.dp),
         fontSize = 30.sp,
-        lineHeight = 20.sp
+        lineHeight = 36.sp
     )
 }
 
@@ -70,7 +68,9 @@ fun UserProfileDrawer(
 ) {
     ModalDrawerSheet (
         drawerShape = RectangleShape,
-        drawerContainerColor = MaterialTheme.colorScheme.surface
+        drawerContainerColor = MaterialTheme.colorScheme.surface,
+        modifier = Modifier
+            .width(300.dp)
     ){
         Column(
             modifier = Modifier.fillMaxHeight()

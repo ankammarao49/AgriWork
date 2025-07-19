@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
@@ -38,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.agriwork.ui.components.PrimaryButton
 import com.example.agriwork.ui.theme.Poppins
 import com.google.firebase.auth.FirebaseAuth
@@ -49,7 +51,8 @@ import java.time.LocalTime
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    navController: NavHostController
 ) {
     val auth = FirebaseAuth.getInstance()
     var userData by remember { mutableStateOf<AppUser?>(null) }
@@ -58,6 +61,10 @@ fun HomeScreen(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     var showLogoutConfirm by remember { mutableStateOf(false) }
+    val categories = listOf(
+        "Plowing", "Sowing", "Weeding", "Irrigation",
+        "Harvesting", "Fertilizer", "Fence Repair", "Planting", "Digging", "Cutting"
+    )
 
     // Fetch user data
     LaunchedEffect(Unit) {
@@ -102,7 +109,7 @@ fun HomeScreen(
             // Top App Bar as first scrollable item
             item {
                 TopAppBar(
-                    title = { Text("Home") },
+                    title = { Text("Home", modifier = Modifier.padding(start = 8.dp)) },
                     navigationIcon = {
                         IconButton(
                             onClick = {
@@ -110,13 +117,13 @@ fun HomeScreen(
                             },
                             modifier = Modifier
                                 .background(Color.Black, shape = CircleShape)
-                                .size(40.dp)
+                                .size(35.dp)
                         ) {
                             Icon(
-                                Icons.Default.Person,
+                                Icons.Default.Menu,
                                 contentDescription = "Open Drawer",
                                 tint = Color.White,
-                                modifier = Modifier.size(30.dp))
+                                modifier = Modifier.size(25.dp))
                         }
                     }
                 )
@@ -150,7 +157,19 @@ fun HomeScreen(
             // User Data Loaded
             userData?.let { user ->
                 item {
-                    HomeScreenContent(user = user)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 10.dp, vertical = 24.dp),
+                    )
+                    {
+                        GreetingWithName(user.name)
+                        when (user.role.lowercase()) {
+                            "farmer" -> FarmerHomeContent(user, categories, navController)
+
+                            "worker" -> WorkerHomeContent(user, categories, navController)
+                        }
+                    }
                 }
             }
 
@@ -165,247 +184,48 @@ fun HomeScreen(
 }
 
 @Composable
-fun HomeScreenContent(
-    modifier: Modifier = Modifier,
-    user: AppUser,
-) {
-    val currentHour = remember { LocalTime.now().hour }
-
-    val greeting = when (currentHour) {
-        in 5..11 -> "Good Morning"
-        in 12..16 -> "Good Afternoon"
-        in 17..20 -> "Good Evening"
-        else -> "Good Night"
-    }
-
+fun FarmerHomeContent(currentUser: AppUser, categories: List<String>, navController: NavHostController) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 10.dp, vertical = 24.dp),
-    )
-    {
-        Text(
-            text = "$greeting\n${user.name}",
-            fontFamily = Poppins,
-            fontWeight = FontWeight.Bold,
-            overflow = TextOverflow.Ellipsis,
-            fontSize = 30.sp,
-            lineHeight = 36.sp
-        )
-
-
-        when (user.role.lowercase()) {
-            "farmer" -> FarmerHomeContent()
-
-            "worker" -> WorkerHomeContent()
-        }
-    }
-}
-
-@Composable
-fun FarmerHomeContent() {
-    val workCategories = listOf(
-        "Plowing & Land Preparation",
-        "Sowing / Seed Planting",
-        "Weeding & Pest Control",
-        "Irrigation & Watering",
-        "Harvesting",
-        "Crop Sorting & Packaging",
-        "Cattle Feeding & Milking",
-        "Poultry Care",
-        "Cleaning Sheds / Barns",
-        "Vaccination / Health Check Support",
-        "Grazing Assistance",
-        "Tractor Driving / Operation",
-        "Farm Equipment Repair",
-        "Irrigation System Maintenance",
-        "Fertilizer / Pesticide Spraying",
-        "Transporting Produce to Market",
-        "Loading / Unloading Farm Goods",
-        "Storage & Inventory Help",
-        "Assisting in Local Delivery",
-        "Farmhouse Cleaning",
-        "Fence / Boundary Repair",
-        "Construction (temporary sheds, etc.)",
-        "Tree Planting",
-        "Farm Security Watch"
-    )
-// Work state
-    val context = LocalContext.current
-    var workList by remember { mutableStateOf<List<Work>>(emptyList()) }
-    var isLoading by remember { mutableStateOf(true) }
-    var error by remember { mutableStateOf<String?>(null) }
-
-    LaunchedEffect(Unit) {
-        fetchAllWorksFromFirestore(
-            onSuccess = {
-                workList = it
-                isLoading = false
-            },
-            onFailure = {
-                error = it.message
-                isLoading = false
-            }
-        )
-    }
-
-
-    var showAll by remember { mutableStateOf(false) }
-
-    val categoriesToShow = if (showAll) workCategories else workCategories.take(4)
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = 20.dp),
-        verticalArrangement = Arrangement.spacedBy(25.dp)
+        modifier = Modifier.fillMaxSize().padding(vertical = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(30.dp)
     ) {
-        PrimaryButton(
-            onClick = { /* TODO: Navigate to Find Workers screen */ },
-            text = "Post a Work"
+        PrimaryButton(onClick = { navController.navigate("creatework") }, text = "Post a Work")
+
+        HorizontalDivider()
+
+        WorkCategorySection(
+            title = "Work Categories",
+            categories = categories,
+            onCategoryClick = { category ->
+                navController.navigate("creatework/$category")
+            }
         )
 
         HorizontalDivider()
 
-        Text("Work Categories", fontFamily = Poppins)
-
-        categoriesToShow.forEach { category ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-                    .clickable {
-                        // TODO: Handle category click
-                    },
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF34699A) // light green background, change as needed
-                ),
-            )
-            {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(25.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-
-                    Box(
-                        modifier = Modifier
-                            .size(48.dp)
-                            .background(
-                                color = Color(0xFF113F67), // light green circle bg, change as you like
-                                shape = CircleShape
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.AccountBox,
-                            contentDescription = "Category Icon",
-                            tint = Color.White,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(30.dp))
-                    Text(
-                        text = category,
-                        fontFamily = Poppins,
-                        textAlign = TextAlign.Center,
-                        color = Color.White
-                    )
-                }
-            }
-        }
-        // 👇 Show "See More" or "Show Less" button
-        OutlinedButton(
-            onClick = { showAll = !showAll },
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(top = 12.dp),
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = Color(0xFF113F67)
-            ),
-            border = BorderStroke(1.dp, Color(0xFF113F67))
-        ) {
-            Text(text = if (showAll) "Show Less" else "See More")
-        }
-
-        HorizontalDivider()
-
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Text(
-                text = "Available Work",
-                fontFamily = Poppins,
-            )
-
-            Spacer(modifier = Modifier.height(25.dp))
-
-            when {
-                isLoading -> CircularProgressIndicator()
-
-                error != null -> Text("Error: $error", color = Color.Red)
-
-                workList.isEmpty() -> Text("No work available at the moment.")
-
-                else -> (workList).forEach { work ->
-                    WorkShowCard(
-                        farmerName = work.farmerName,
-                        workTitle = work.workTitle,
-                        daysRequired = work.daysRequired,
-                        acres = work.acres,
-                        workersNeeded = work.workersNeeded,
-                        noOfWorkersSelected = work.noOfWorkersSelected,
-                        location = work.location,
-                        onApplyClick = {}
-                    )
-                }
-            }
-
-        }
+        AvailableWorkSection(currentUser)
     }
 }
 
 @Composable
-fun WorkerHomeContent() {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Button(onClick = { /* TODO: Navigate to Jobs screen */ }) {
-            Text("Browse Available Jobs")
-        }
-        Button(
-            onClick = {
-                val db = FirebaseFirestore.getInstance()
+fun WorkerHomeContent(currentUser: AppUser, categories: List<String>, navController: NavHostController) {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(vertical = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(30.dp)
+    ) {
+        PrimaryButton(onClick = {  }, text = "Find a Work")
 
-                val work = Work(
-                    farmerName = "Dhanush",
-                    workTitle = "Harvest Tomatoes",
-                    daysRequired = 3,
-                    acres = 1.5,
-                    workersNeeded = 4,
-                    workersSelected = listOf(
-                        AppUser("Ankammarao", "worker", "Detected Village, District", "+919392460175")
-                    ),
-                    workersApplied = listOf(
-                        AppUser("Daddy", "worker", "Detected Village, District", "+919160725824"),
-                        AppUser("Ankammarao", "worker", "Detected Village, District", "+919392460175")
-                    ),
-                    location = "Detected Village, District"
-                )
+        HorizontalDivider()
 
-                db.collection("works")
-                    .add(work)
-                    .addOnSuccessListener { docRef ->
-                        Log.d("Firestore", "Added with ID: ${docRef.id}")
-                    }
-                    .addOnFailureListener { e ->
-                        Log.w("Firestore", "Failed to add", e)
-                    }
+        WorkCategorySection(
+            title = "Work Categories",
+            categories = categories,
+            onCategoryClick = { category ->
             }
-        ) {
-            Text("Add Test Work")
-        }
+        )
 
-        // Add more worker-specific UI here later
+        HorizontalDivider()
+
+        AvailableWorkSection(currentUser)
     }
 }

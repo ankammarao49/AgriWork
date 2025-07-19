@@ -1,5 +1,3 @@
- 
-
 import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
