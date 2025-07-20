@@ -106,36 +106,28 @@ fun CategoryCard(category: String, onClick: () -> Unit) {
 
 
 @Composable
-fun AvailableWorkSection(currentUser: AppUser)
-{
-    val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: return
-    val context = LocalContext.current
-    var isLoading by remember { mutableStateOf(true) }
-    var error by remember { mutableStateOf<String?>(null) }
-    val workList = remember { mutableStateListOf<Work>() }
-    val availableWorks = remember { mutableStateListOf<Work>() }
-    val appliedWorks = remember { mutableStateListOf<Work>() }
+fun WorkListSection(
+    title: String,
+    workList: List<Work>,
+    currentUid: String,
+    currentUserRole: String,
+    filterType: WorkFilterType,
+    onApplyClick: (Work) -> Unit
+) {
+    val filteredWorks = filterWorks(workList, currentUid, filterType)
 
-    LaunchedEffect(Unit) {
-        listenToWorks { updatedWorks ->
-            workList.clear()
-            workList.addAll(updatedWorks)
-            isLoading = false
-        }
-    }
+    Column(modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp)) {
+        Text(title, fontFamily = Poppins, fontWeight = FontWeight.SemiBold)
+        Spacer(modifier = Modifier.height(15.dp))
 
-
-    Column {
-        Text("Available Work", fontFamily = Poppins, fontWeight = FontWeight.SemiBold)
-        Spacer(modifier = Modifier.height(25.dp))
-
-        when {
-            isLoading -> CircularProgressIndicator()
-            error != null -> Text("Error: $error", color = Color.Red)
-            workList.isEmpty() -> Text("No work available at the moment.")
-            else -> workList.forEach { work ->
+        if (filteredWorks.isEmpty()) {
+            Text("No work found in this section.")
+        } else {
+            filteredWorks.forEach { work ->
                 val hasAlreadyApplied = work.workersApplied?.contains(currentUid) == true
                 val isWorkFull = (work.workersSelected?.size ?: 0) >= work.workersNeeded
+                val canApply = !hasAlreadyApplied && !isWorkFull
+
                 WorkShowCard(
                     farmerName = work.farmer.name,
                     workTitle = work.workTitle,
@@ -145,20 +137,104 @@ fun AvailableWorkSection(currentUser: AppUser)
                     noOfWorkersSelected = work.workersSelected?.size ?: 0,
                     noOfWorkersApplied = work.workersApplied?.size ?: 0,
                     location = work.farmer.location,
-                    onApplyClick = {
+                    onApplyClick = { onApplyClick(work) },
+                    showApplyButton = shouldShowApplyButton(
+                        currentUserRole = currentUserRole,
+                        currentUid = currentUid,
+                        work = work,
+
+                    )
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun FarmerDashboardScreen(currentUser: AppUser) {
+    val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+    var isLoading by remember { mutableStateOf(true) }
+    var error by remember { mutableStateOf<String?>(null) }
+    val workList = remember { mutableStateListOf<Work>() }
+
+    LaunchedEffect(Unit) {
+        listenToWorks { updatedWorks ->
+            workList.clear()
+            workList.addAll(updatedWorks)
+            isLoading = false
+        }
+    }
+
+    Column {
+        Text("Your Posted Works", fontFamily = Poppins, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+        Spacer(modifier = Modifier.height(20.dp))
+
+        when {
+            isLoading -> CircularProgressIndicator()
+            error != null -> Text("Error: $error", color = Color.Red)
+            else -> {
+                val createdByMe = workList.filter { it.farmer.uid == currentUid }
+
+                WorkListSection(
+                    title = "Works You Posted",
+                    workList = createdByMe,
+                    currentUid = currentUid,
+                    currentUserRole = "farmer",
+                    filterType = WorkFilterType.CREATED_BY_ME
+                ) { /* Farmers don’t apply, so no apply callback */ }
+            }
+        }
+    }
+}
+
+@Composable
+fun WorkerDashboardScreen(currentUser: AppUser) {
+    val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+    var isLoading by remember { mutableStateOf(true) }
+    var error by remember { mutableStateOf<String?>(null) }
+    val workList = remember { mutableStateListOf<Work>() }
+
+    LaunchedEffect(Unit) {
+        listenToWorks { updatedWorks ->
+            workList.clear()
+            workList.addAll(updatedWorks)
+            isLoading = false
+        }
+    }
+
+    Column {
+        Text("Available Work", fontFamily = Poppins, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+        Spacer(modifier = Modifier.height(20.dp))
+
+        when {
+            isLoading -> CircularProgressIndicator()
+            error != null -> Text("Error: $error", color = Color.Red)
+            else -> {
+                val filterConfigs = listOf(
+                    "Available Work" to WorkFilterType.AVAILABLE,
+                    "Work You Applied" to WorkFilterType.APPLIED,
+                    "Work You're Selected For" to WorkFilterType.SELECTED
+                )
+
+                filterConfigs.forEach { (title, filterType) ->
+                    WorkListSection(
+                        title = title,
+                        workList = workList,
+                        currentUid = currentUid,
+                        currentUserRole = "worker",
+                        filterType = filterType
+                    ) { work ->
                         applyToWork(work.id) {
-                            // update local workList
                             val index = workList.indexOfFirst { it.id == work.id }
                             if (index != -1) {
-                                val updatedWork = work.copy(
+                                val updated = work.copy(
                                     workersApplied = (work.workersApplied ?: emptyList()) + currentUid
                                 )
-                                workList[index] = updatedWork
+                                workList[index] = updated
                             }
                         }
-                    },
-                    applyButtonEnabled = !hasAlreadyApplied && !isWorkFull
-                )
+                    }
+                }
             }
         }
     }
@@ -176,100 +252,156 @@ fun WorkShowCard(
     noOfWorkersSelected: Int,
     location: String,
     onApplyClick: () -> Unit = {},
-    applyButtonEnabled: Boolean = true
+    showApplyButton: Boolean = true
 ) {
     Card(
-        shape = RoundedCornerShape(12.dp),
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5))
+        modifier = modifier.fillMaxWidth().padding(bottom = 20.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(6.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        Column {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
-                    .background(Color(0xFFB2DFDB))
-                    .padding(vertical = 15.dp, horizontal = 20.dp)
+        Column(modifier = Modifier.padding(16.dp)) {
+
+            // Header with prominent Workers Needed
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
-                    text = workTitle,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    fontFamily = Poppins
-                )
+                Column {
+                    Text(
+                        text = workTitle,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = Poppins
+                    )
+                    Text(
+                        text = "by $farmerName",
+                        fontSize = 14.sp,
+                        color = Color.Gray,
+                        fontFamily = Poppins
+                    )
+                }
+
+                Surface(
+                    color = Color(0xFFFFF3E0),
+                    shape = RoundedCornerShape(8.dp),
+                    shadowElevation = 2.dp
+                ) {
+                    Text(
+                        text = "$workersNeeded workers needed",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                        color = Color(0xFFD84315), // deep orange
+                        fontFamily = Poppins
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(12.dp))
 
+            // Detail Info Grid
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                DetailRow(label = "Location", value = location)
+                DetailRow(label = "Time Required", value = "$daysRequired day${if (daysRequired > 1) "s" else ""}")
+                DetailRow(label = "Land Area", value = "$acres acres") // Moved acres down here
+                DetailRow(label = "Applied", value = "$noOfWorkersApplied")
+                DetailRow(label = "Selected", value = "$noOfWorkersSelected")
+            }
 
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Text(
-                    text = farmerName,
-                    fontSize = 14.sp,
-                    fontFamily = Poppins,
-                    fontWeight = FontWeight.Medium
-                )
-                Text(
-                    text = "$acres acres",
-                    fontSize = 14.sp,
-                    fontFamily = Poppins,
-                    color = Color.DarkGray
-                )
-                Text(
-                    text = location,
-                    fontSize = 14.sp,
-                    fontFamily = Poppins,
-                    color = Color.DarkGray
-                )
-                Text(
-                    text = "Estimated Time: $daysRequired day${if (daysRequired > 1) "s" else ""}",
-                    fontSize = 14.sp,
-                    fontFamily = Poppins,
-                    color = Color.DarkGray
-                )
-                Text(
-                    text = "Workers Needed: $workersNeeded",
-                    fontSize = 14.sp,
-                    fontFamily = Poppins,
-                    color = Color.DarkGray
-                )
+            Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
-                    text = "Workers Applied: $noOfWorkersApplied",
-                    fontSize = 14.sp,
-                    fontFamily = Poppins,
-                    color = Color(0xFF666666) // Slightly lighter to show it's pending
-                )
-
-                Text(
-                    text = "Workers Selected: $noOfWorkersSelected",
-                    fontSize = 14.sp,
-                    fontFamily = Poppins,
-                    color = Color.DarkGray
-                )
-
+            // Apply Button
+            if (showApplyButton) {
+                Button(
+                    onClick = onApplyClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(45.dp),
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Text(
+                        text = "Apply",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        fontFamily = Poppins
+                    )
+                }
             }
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Apply Button
-        Button(
-            onClick = onApplyClick,
-            enabled = applyButtonEnabled, // 👈 Disable if already applied
-            modifier = Modifier
-                .align(Alignment.End)
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-                .height(40.dp)
-        ) {
-            Text(
-                text = if (applyButtonEnabled) "Apply" else "Already Applied",
-                color = Color.White,
-                fontWeight = FontWeight.Medium,
-                fontSize = 14.sp
-            )
-        }
     }
+}
+
+
+@Composable
+fun DetailRow(label: String, value: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = label,
+            fontSize = 14.sp,
+            fontFamily = Poppins,
+            color = Color.DarkGray
+        )
+        Text(
+            text = value,
+            fontSize = 14.sp,
+            fontFamily = Poppins,
+            fontWeight = FontWeight.Medium
+        )
+    }
+}
+
+@Composable
+private fun InfoRow(label: String, value: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = label,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+            fontFamily = Poppins,
+            color = Color(0xFF444444)
+        )
+        Text(
+            text = value,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Normal,
+            fontFamily = Poppins,
+            color = Color(0xFF222222)
+        )
+    }
+}
+
+// WorkFilters.kt
+fun filterWorks(
+    workList: List<Work>,
+    currentUid: String,
+    type: WorkFilterType
+): List<Work> {
+    return when (type) {
+        WorkFilterType.ALL -> workList
+        WorkFilterType.AVAILABLE -> workList.filter { work ->
+            val hasApplied = work.workersApplied?.contains(currentUid) == true
+            val isFull = (work.workersSelected?.size ?: 0) >= work.workersNeeded
+            !hasApplied && !isFull
+        }
+        WorkFilterType.APPLIED -> workList.filter { it.workersApplied?.contains(currentUid) == true }
+        WorkFilterType.CREATED_BY_ME -> workList.filter { it.farmer.uid == currentUid }
+        WorkFilterType.SELECTED -> workList.filter { it.workersSelected?.contains(currentUid) == true }
+    }
+}
+
+enum class WorkFilterType {
+    ALL,
+    AVAILABLE,
+    APPLIED,
+    CREATED_BY_ME,
+    SELECTED
 }
 
 fun fetchAllWorksFromFirestore(
@@ -342,4 +474,16 @@ fun listenToWorks(onWorksUpdate: (List<Work>) -> Unit) {
 
             onWorksUpdate(works)
         }
+}
+
+fun shouldShowApplyButton(
+    currentUserRole: String,
+    currentUid: String,
+    work: Work
+): Boolean {
+    if (currentUserRole == "farmer") return false            // Farmers never apply
+    if (work.farmer.uid == currentUid) return false          // You posted it
+    if (work.workersApplied?.contains(currentUid) == true) return false
+    if ((work.workersSelected?.size ?: 0) >= work.workersNeeded) return false
+    return true
 }

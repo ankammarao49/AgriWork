@@ -74,7 +74,7 @@ fun UserProfileDrawer(
     ){
         Column(
             modifier = Modifier.fillMaxHeight()
-                .padding(16.dp),
+                .padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
