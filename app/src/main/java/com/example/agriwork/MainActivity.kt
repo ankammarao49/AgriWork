@@ -129,6 +129,10 @@ fun AgriWorkAppContent(navController: NavHostController) {
             CreateWorkScreen(navController = navController, category = category)
         }
 
+        composable("applicants/{workId}") { backStackEntry ->
+            val workId = backStackEntry.arguments?.getString("workId") ?: ""
+            ApplicantsScreen(workId = workId, navController = navController)
+        }
 
     }
 }

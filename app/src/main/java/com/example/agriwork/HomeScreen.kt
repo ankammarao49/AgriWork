@@ -203,7 +203,7 @@ fun FarmerHomeContent(currentUser: AppUser, categories: List<String>, navControl
 
         HorizontalDivider()
 
-        FarmerDashboardScreen(currentUser)
+        FarmerDashboardScreen(currentUser, navController)
     }
 }
 
@@ -227,6 +227,6 @@ fun WorkerHomeContent(currentUser: AppUser, categories: List<String>, navControl
 
         HorizontalDivider()
 
-        WorkerDashboardScreen(currentUser)
+        WorkerDashboardScreen(currentUser, navController)
     }
 }

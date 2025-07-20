@@ -5,8 +5,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -21,9 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -112,7 +108,8 @@ fun WorkListSection(
     currentUid: String,
     currentUserRole: String,
     filterType: WorkFilterType,
-    onApplyClick: (Work) -> Unit
+    onApplyClick: (Work) -> Unit,
+    navController: NavHostController
 ) {
     val filteredWorks = filterWorks(workList, currentUid, filterType)
 
@@ -137,13 +134,16 @@ fun WorkListSection(
                     noOfWorkersSelected = work.workersSelected?.size ?: 0,
                     noOfWorkersApplied = work.workersApplied?.size ?: 0,
                     location = work.farmer.location,
-                    onApplyClick = { onApplyClick(work) },
                     showApplyButton = shouldShowApplyButton(
                         currentUserRole = currentUserRole,
                         currentUid = currentUid,
                         work = work,
+                    ),
+                    onApplyClick = { onApplyClick(work) },
+                    onViewApplicantsClick = {
+                        navController.navigate("applicants/${work.id}")
+                    }
 
-                    )
                 )
             }
         }
@@ -151,7 +151,7 @@ fun WorkListSection(
 }
 
 @Composable
-fun FarmerDashboardScreen(currentUser: AppUser) {
+fun FarmerDashboardScreen(currentUser: AppUser, navController: NavHostController) {
     val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: return
     var isLoading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
@@ -180,15 +180,17 @@ fun FarmerDashboardScreen(currentUser: AppUser) {
                     workList = createdByMe,
                     currentUid = currentUid,
                     currentUserRole = "farmer",
-                    filterType = WorkFilterType.CREATED_BY_ME
-                ) { /* Farmers don’t apply, so no apply callback */ }
+                    filterType = WorkFilterType.CREATED_BY_ME,
+                    navController = navController,
+                    onApplyClick = { /* Farmers don’t apply, so no apply callback */ },
+                )
             }
         }
     }
 }
 
 @Composable
-fun WorkerDashboardScreen(currentUser: AppUser) {
+fun WorkerDashboardScreen(currentUser: AppUser, navController: NavHostController) {
     val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: return
     var isLoading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
@@ -222,18 +224,20 @@ fun WorkerDashboardScreen(currentUser: AppUser) {
                         workList = workList,
                         currentUid = currentUid,
                         currentUserRole = "worker",
-                        filterType = filterType
-                    ) { work ->
-                        applyToWork(work.id) {
-                            val index = workList.indexOfFirst { it.id == work.id }
-                            if (index != -1) {
-                                val updated = work.copy(
-                                    workersApplied = (work.workersApplied ?: emptyList()) + currentUid
-                                )
-                                workList[index] = updated
+                        filterType = filterType,
+                        onApplyClick = { work ->
+                            applyToWork(work.id) {
+                                val index = workList.indexOfFirst { it.id == work.id }
+                                if (index != -1) {
+                                    val updated = work.copy(
+                                        workersApplied = (work.workersApplied ?: emptyList()) + currentUid
+                                    )
+                                    workList[index] = updated
+                                }
                             }
-                        }
-                    }
+                        },
+                        navController = navController
+                    )
                 }
             }
         }
@@ -252,6 +256,7 @@ fun WorkShowCard(
     noOfWorkersSelected: Int,
     location: String,
     onApplyClick: () -> Unit = {},
+    onViewApplicantsClick: () -> Unit = {},
     showApplyButton: Boolean = true
 ) {
     Card(
@@ -325,6 +330,24 @@ fun WorkShowCard(
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
                         fontFamily = Poppins
+                    )
+                }
+            }
+            else {
+                OutlinedButton(
+                    onClick = onViewApplicantsClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(45.dp),
+                    shape = RoundedCornerShape(10.dp),
+                    border = BorderStroke(1.dp, Color(0xFF37474F))
+                ) {
+                    Text(
+                        text = "View Applicants",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        fontFamily = Poppins,
+                        color = Color(0xFF37474F)
                     )
                 }
             }
