@@ -377,29 +377,6 @@ fun DetailRow(label: String, value: String) {
     }
 }
 
-@Composable
-private fun InfoRow(label: String, value: String) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = label,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
-            fontFamily = Poppins,
-            color = Color(0xFF444444)
-        )
-        Text(
-            text = value,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Normal,
-            fontFamily = Poppins,
-            color = Color(0xFF222222)
-        )
-    }
-}
-
 // WorkFilters.kt
 fun filterWorks(
     workList: List<Work>,

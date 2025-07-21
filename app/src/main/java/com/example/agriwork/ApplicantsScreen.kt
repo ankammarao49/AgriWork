@@ -1,5 +1,6 @@
 package com.example.agriwork
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
@@ -27,6 +29,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -51,7 +55,7 @@ import com.google.firebase.firestore.firestore
 @Composable
 fun ApplicantsScreen(workId: String, navController: NavHostController) {
     val db = Firebase.firestore
-    var farmer by remember { mutableStateOf<AppUser?>(null) }
+    var work by remember { mutableStateOf<Work?>(null) }
     var applicants by remember { mutableStateOf<List<AppUser>>(emptyList()) }
     var selectedApplicants by remember { mutableStateOf<List<String>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
@@ -60,12 +64,11 @@ fun ApplicantsScreen(workId: String, navController: NavHostController) {
     LaunchedEffect(workId) {
         db.collection("works").document(workId).get()
             .addOnSuccessListener { document ->
-                val farmerUid = document["postedBy"] as? String
-                val appliedUids = document["workersApplied"] as? List<String> ?: emptyList()
-                val selectedUids = document["workersSelected"] as? List<String> ?: emptyList()
-                selectedApplicants = selectedUids
+                val workObj = document.toObject(Work::class.java)
+                work = workObj
+                selectedApplicants = workObj?.workersSelected ?: emptyList()
 
-                // Fetch applicants
+                val appliedUids = workObj?.workersApplied ?: emptyList()
                 if (appliedUids.isNotEmpty()) {
                     db.collection("users")
                         .whereIn("uid", appliedUids)
@@ -77,72 +80,90 @@ fun ApplicantsScreen(workId: String, navController: NavHostController) {
                 } else {
                     isLoading = false
                 }
-
-                // Fetch farmer
-                farmerUid?.let {
-                    db.collection("users").document(it).get()
-                        .addOnSuccessListener { userDoc ->
-                            farmer = userDoc.toObject(AppUser::class.java)
-                        }
-                }
             }
     }
 
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        // Header with back button and count
-        farmer?.let {
-            FarmerDetailsCard(it)
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = { navController.popBackStack() }) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color(0xFF113F67))
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        item {
+            // 🔙 Back + Header
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color(0xFF113F67))
+                }
+                Text(
+                    text = "Applicants",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = Poppins
+                )
             }
+
+            // 👥 Count Text
             Text(
-                text = "Applicants",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
+                text = "Applied: ${applicants.size} | Selected: ${selectedApplicants.size} | Needed: ${work?.workersNeeded ?: "-"}",
+                fontSize = 14.sp,
                 fontFamily = Poppins,
+                color = Color.DarkGray,
+                modifier = Modifier.padding(start = 12.dp, top = 4.dp)
             )
+
+            Spacer(modifier = Modifier.height(12.dp))
         }
 
-        Text(
-            text = "Applied: ${applicants.size} | Selected: ${selectedApplicants.size}",
-            fontSize = 14.sp,
-            fontFamily = Poppins,
-            color = Color.DarkGray,
-            modifier = Modifier.padding(start = 12.dp, top = 4.dp)
-        )
+        // 📄 Work and Farmer Info
+        item {
+            WorkAndFarmerCard(work ?: return@item)
+        }
 
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Tabs
-        Row {
-            listOf("Applied", "Selected").forEach { tab ->
-                val isActive = tab == selectedTab
-                TextButton(
-                    onClick = { selectedTab = tab },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(
-                        tab,
-                        fontFamily = Poppins,
-                        color = if (isActive) Color.Black else Color.Gray,
-                        fontWeight = if (isActive) FontWeight.Bold else FontWeight.Normal
-                    )
+        // 🧾 Sleek Tab Buttons
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                listOf("Applied", "Selected").forEach { tab ->
+                    val isActive = tab == selectedTab
+                    OutlinedButton(
+                        onClick = { selectedTab = tab },
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = if (isActive) Color.Black else Color.White,
+                            contentColor = if (isActive) Color.White else Color.Black
+                        ),
+                        border = BorderStroke(1.dp, if (isActive) Color.Black else Color.Gray),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(40.dp)
+                    ) {
+                        Text(
+                            text = tab,
+                            fontFamily = Poppins,
+                            fontSize = 14.sp,
+                            fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Normal
+                        )
+                    }
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
 
+        // 🌀 Loading Indicator
         if (isLoading) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = Color.Black)
+            item {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = Color.Black)
+                }
             }
         } else {
+            // 👇 Filtered list based on tab
             val filteredList = when (selectedTab) {
                 "Applied" -> applicants.filter { !selectedApplicants.contains(it.uid) }
                 "Selected" -> applicants.filter { selectedApplicants.contains(it.uid) }
@@ -150,65 +171,101 @@ fun ApplicantsScreen(workId: String, navController: NavHostController) {
             }
 
             if (filteredList.isEmpty()) {
-                Text("No ${selectedTab.lowercase()} applicants.", fontFamily = Poppins)
-            } else {
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    items(filteredList) { user ->
-                        ApplicantCard(
-                            user = user,
-                            isAlreadySelected = selectedApplicants.contains(user.uid),
-                            onApproveClick = {
-                                approveApplicant(
-                                    workId = workId,
-                                    userId = user.uid,
-                                    onSuccess = {
-                                        selectedApplicants = selectedApplicants + user.uid
-                                    },
-                                    onError = { /* Handle error */ }
-                                )
-                            }
-                        )
-                    }
+                item {
+                    Text("No ${selectedTab.lowercase()} applicants.", fontFamily = Poppins)
                 }
+            } else {
+                items(filteredList) { user ->
+                    ApplicantCard(
+                        user = user,
+                        isAlreadySelected = selectedApplicants.contains(user.uid),
+                        onApproveClick = {
+                            approveApplicant(
+                                workId = workId,
+                                userId = user.uid,
+                                onSuccess = {
+                                    selectedApplicants = selectedApplicants + user.uid
+                                },
+                                onError = { /* Handle error */ }
+                            )
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+}
+
+@Composable
+fun WorkAndFarmerCard(work: Work) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(1.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+
+            // Header
+            Text(
+                text = "Work & Farmer Details",
+                fontFamily = Poppins,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 18.sp,
+                color = Color.Black
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Grid layout: 2 columns for clarity
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                TwoColumnRow("Work Title", work.workTitle)
+                Divider(color = Color(0xFFE0E0E0), thickness = 1.dp)
+
+                TwoColumnRow("Days Required", "${work.daysRequired}")
+                Divider(color = Color(0xFFE0E0E0), thickness = 1.dp)
+
+                TwoColumnRow("Acres", "${work.acres}")
+                Divider(color = Color(0xFFE0E0E0), thickness = 1.dp)
+
+                TwoColumnRow("Farmer Name", work.farmer.name)
+                Divider(color = Color(0xFFE0E0E0), thickness = 1.dp)
+
+                TwoColumnRow("Location", work.farmer.location)
+                Divider(color = Color(0xFFE0E0E0), thickness = 1.dp)
+
+                TwoColumnRow("Phone", work.farmer.mobileNumber)
             }
         }
     }
 }
 
 @Composable
-fun FarmerDetailsCard(farmer: AppUser) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(2.dp)
+fun TwoColumnRow(label: String, value: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text("Farmer Info", fontFamily = Poppins, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.Black)
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Person, contentDescription = "Farmer Name", tint = Color.Black)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(farmer.name, fontFamily = Poppins, color = Color.Black)
-            }
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.LocationOn, contentDescription = "Location", tint = Color.Gray)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(farmer.location, fontFamily = Poppins, color = Color.DarkGray)
-            }
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Phone, contentDescription = "Phone", tint = Color.Gray)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(farmer.mobileNumber, fontFamily = Poppins, color = Color.DarkGray)
-            }
-        }
+        Text(
+            text = label,
+            fontFamily = Poppins,
+            fontSize = 14.sp,
+            color = Color.Gray
+        )
+        Text(
+            text = value,
+            fontFamily = Poppins,
+            fontWeight = FontWeight.Medium,
+            fontSize = 14.sp,
+            color = Color.Black
+        )
     }
 }
 
@@ -216,51 +273,17 @@ fun FarmerDetailsCard(farmer: AppUser) {
 fun ApplicantCard(user: AppUser, isAlreadySelected: Boolean, onApproveClick: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(4.dp)
+        elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Person, contentDescription = "Name", tint = Color.Black)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    user.name,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    fontFamily = Poppins,
-                    color = Color.Black
-                )
-            }
-
-            Spacer(modifier = Modifier.height(6.dp))
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.LocationOn, contentDescription = "Location", tint = Color.Gray)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    user.location,
-                    fontSize = 14.sp,
-                    fontFamily = Poppins,
-                    color = Color.DarkGray
-                )
-            }
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Phone, contentDescription = "Mobile", tint = Color.Gray)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    user.mobileNumber,
-                    fontSize = 14.sp,
-                    fontFamily = Poppins,
-                    color = Color.DarkGray
-                )
-            }
+            InfoRow(label = "Name", value = user.name)
+            InfoRow(label = "Location", value = user.location)
+            InfoRow(label = "Mobile", value = user.mobileNumber)
 
             if (!isAlreadySelected) {
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(10.dp))
                 Button(
                     onClick = onApproveClick,
                     modifier = Modifier.fillMaxWidth(),
@@ -269,21 +292,46 @@ fun ApplicantCard(user: AppUser, isAlreadySelected: Boolean, onApproveClick: () 
                     Text("Approve", fontFamily = Poppins, color = Color.White)
                 }
             } else {
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(10.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.CheckCircle, contentDescription = "Selected", tint = Color(0xFF388E3C))
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = null,
+                        tint = Color(0xFF4CAF50)
+                    )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         "Selected",
                         fontFamily = Poppins,
-                        color = Color(0xFF388E3C),
-                        fontWeight = FontWeight.Medium
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF4CAF50)
                     )
                 }
             }
         }
     }
 }
+
+@Composable
+fun InfoRow(label: String, value: String) {
+    Column(modifier = Modifier.padding(vertical = 4.dp)) {
+        Text(
+            text = label,
+            fontFamily = Poppins,
+            fontSize = 12.sp,
+            color = Color.Gray
+        )
+        Text(
+            text = value,
+            fontFamily = Poppins,
+            fontWeight = FontWeight.Medium,
+            fontSize = 14.sp,
+            color = Color.Black
+        )
+    }
+}
+
 
 fun approveApplicant(workId: String, userId: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
     val db = Firebase.firestore

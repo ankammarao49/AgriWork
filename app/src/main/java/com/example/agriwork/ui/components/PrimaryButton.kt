@@ -11,6 +11,8 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import com.example.agriwork.ui.theme.Poppins
 
 @Composable
@@ -20,6 +22,7 @@ fun PrimaryButton(
     onClick: () -> Unit,
     enabled: Boolean = true,
     textColor: Color = Color.White,
+    buttonColor: Color = MaterialTheme.colorScheme.primary,
     fontSize: TextUnit? = null
 ) {
     Button(
@@ -28,7 +31,9 @@ fun PrimaryButton(
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp),
-        shape = RoundedCornerShape(16.dp)
+        colors = ButtonDefaults.buttonColors(containerColor = buttonColor),
+        shape = RoundedCornerShape(16.dp),
+
     ) {
         Text(
             text = text,

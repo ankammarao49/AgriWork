@@ -1,10 +1,15 @@
 package com.example.agriwork
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -15,13 +20,6 @@ import com.example.agriwork.ui.components.PrimaryButton
 import com.example.agriwork.ui.theme.AgriWorkTheme
 import com.example.agriwork.ui.theme.Poppins
 import com.google.firebase.auth.FirebaseAuth
-
-fun logout(navController: NavController) {
-    FirebaseAuth.getInstance().signOut()
-    navController.navigate("auth") {
-        popUpTo(0) // Clears backstack so back press won’t return to home
-    }
-}
 
 @Composable
 fun EntryScreen(onGetStarted: () -> Unit) {
@@ -35,7 +33,7 @@ fun EntryScreen(onGetStarted: () -> Unit) {
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-                Spacer(modifier = Modifier.height(45.dp)) // Adjust spacing if needed
+                Spacer(modifier = Modifier.height(45.dp))
                 Text(
                     text = "Welcome to \nAgriWork",
                     fontFamily = Poppins,
@@ -58,20 +56,13 @@ fun EntryScreen(onGetStarted: () -> Unit) {
                 )
             }
 
-//            Button(
-//                onClick = {onGetStarted()},
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(56.dp),
-//                colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
-//            ) {
-//                Text(
-//                    text = "Get Started",
-//                    color = Color.White,
-//                    fontSize = 16.sp,
-//                    fontWeight = FontWeight.SemiBold
-//                )
-//            }
+            Image(
+                painter = painterResource(id = R.drawable.farmer_cuate), // Add your own illustration!
+                contentDescription = "Welcome Illustration",
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentScale = ContentScale.Crop
+            )
 
             PrimaryButton(
                 onClick = {onGetStarted()},
@@ -80,3 +71,4 @@ fun EntryScreen(onGetStarted: () -> Unit) {
         }
     }
 }
+
