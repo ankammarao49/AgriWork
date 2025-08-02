@@ -65,6 +65,19 @@ fun HomeScreen(
         "Plowing", "Sowing", "Weeding", "Irrigation",
         "Harvesting", "Fertilizer", "Fence Repair", "Planting", "Digging", "Cutting"
     )
+    val categoryItems = listOf(
+        "Plowing" to R.drawable.plowing,
+        "Sowing" to R.drawable.sowing,
+        "Weeding" to R.drawable.weeding,
+        "Irrigation" to R.drawable.irrigation,
+        "Harvesting" to R.drawable.harvesting,
+        "Fertilizer" to R.drawable.fertilizers,
+        "Digging" to R.drawable.digging,
+//        "Fence Repair" to R.drawable.fence_repair,
+//        "Planting" to R.drawable.planting,
+//        "Cutting" to R.drawable.cutting
+    )
+
 
     // Fetch user data
     LaunchedEffect(Unit) {
@@ -165,9 +178,9 @@ fun HomeScreen(
                     {
                         GreetingWithName(user.name)
                         when (user.role.lowercase()) {
-                            "farmer" -> FarmerHomeContent(user, categories, navController)
+                            "farmer" -> FarmerHomeContent(user, categoryItems, navController)
 
-                            "worker" -> WorkerHomeContent(user, categories, navController)
+                            "worker" -> WorkerHomeContent(user, navController)
                         }
                     }
                 }
@@ -184,7 +197,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun FarmerHomeContent(currentUser: AppUser, categories: List<String>, navController: NavHostController) {
+fun FarmerHomeContent(currentUser: AppUser, categoryItems: List<Pair<String, Int>>, navController: NavHostController) {
     Column(
         modifier = Modifier.fillMaxSize().padding(vertical = 20.dp),
         verticalArrangement = Arrangement.spacedBy(30.dp)
@@ -195,7 +208,7 @@ fun FarmerHomeContent(currentUser: AppUser, categories: List<String>, navControl
 
         WorkCategorySection(
             title = "Work Categories",
-            categories = categories,
+            categoryItems = categoryItems,
             onCategoryClick = { category ->
                 navController.navigate("creatework/$category")
             }
@@ -208,7 +221,7 @@ fun FarmerHomeContent(currentUser: AppUser, categories: List<String>, navControl
 }
 
 @Composable
-fun WorkerHomeContent(currentUser: AppUser, categories: List<String>, navController: NavHostController) {
+fun WorkerHomeContent(currentUser: AppUser, navController: NavHostController) {
     Column(
         modifier = Modifier.fillMaxSize().padding(vertical = 20.dp),
         verticalArrangement = Arrangement.spacedBy(30.dp)

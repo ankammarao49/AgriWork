@@ -23,25 +23,22 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-//    primary = Purple40,
-    primary = PureBlack,
-    secondary = SlateGray,
-    secondaryContainer = SlateGray,
-    onSecondary = Color.White,
-    onSecondaryContainer = Color.White,
-    tertiary = Pink40,
-    background = SoftGray,
-    onSurface = Color.Black,
-    surface = SoftGray,
+    primary = LightGreen,
+    onPrimary = TextOnPrimary,
+    primaryContainer = LightGreenContainer,
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    secondary = Amber,
+    onSecondary = TextOnSecondary,
+    secondaryContainer = AmberContainer,
+
+    background = AppBackground,
+    onBackground = TextPrimary,
+
+    surface = AppSurface,
+    onSurface = TextSecondary,
+
+    error = AppError,
+    onError = Color.White
 )
 @Composable
 fun AgriWorkTheme(

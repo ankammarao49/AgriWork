@@ -30,12 +30,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.firebase.firestore.FirebaseFirestore
+import androidx.compose.material.icons.filled.Work
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Terrain
+import androidx.compose.material.icons.filled.Group
+import androidx.compose.material.icons.filled.Landscape
+
 
 @Composable
 fun CreateWorkScreen(navController: NavController, category: String = "") {
@@ -195,45 +202,55 @@ fun WorkForm(
         Text("Create Work Request", style = MaterialTheme.typography.titleLarge)
 
         @Composable
-        fun inputField(label: String, value: String, onValueChange: (String) -> Unit) {
+        fun inputFieldWithIcon(
+            label: String,
+            value: String,
+            onValueChange: (String) -> Unit,
+            icon: ImageVector,
+            keyboardType: KeyboardType = KeyboardType.Text
+        ) {
             OutlinedTextField(
                 value = value,
                 onValueChange = onValueChange,
                 label = { Text(label) },
+                leadingIcon = { Icon(icon, contentDescription = label) },
                 isError = showError && value.isBlank(),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = keyboardType)
             )
         }
 
-        inputField("Work Title", workTitle) { workTitle = it.trim() }
-
-        OutlinedTextField(
-            value = daysRequired,
-            onValueChange = { daysRequired = it.filter { c -> c.isDigit() } },
-            label = { Text("Days Required") },
-            isError = showError && daysRequired.isBlank(),
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        inputFieldWithIcon(
+            label = "Work Title",
+            value = workTitle,
+            onValueChange = { workTitle = it.trim() },
+            icon = Icons.Default.Work
         )
 
-        OutlinedTextField(
+        inputFieldWithIcon(
+            label = "Days Required",
+            value = daysRequired,
+            onValueChange = { daysRequired = it.filter { c -> c.isDigit() } },
+            icon = Icons.Default.CalendarToday,
+            keyboardType = KeyboardType.Number
+        )
+
+        inputFieldWithIcon(
+            label = "Acres",
             value = acres,
             onValueChange = {
                 acres = it.takeIf { input -> input.matches(Regex("^\\d*\\.?\\d*\$")) } ?: acres
             },
-            label = { Text("Acres") },
-            isError = showError && acres.isBlank(),
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+            icon = Icons.Default.Landscape,
+            keyboardType = KeyboardType.Decimal
         )
 
-        OutlinedTextField(
+        inputFieldWithIcon(
+            label = "Workers Needed",
             value = workersNeeded,
             onValueChange = { workersNeeded = it.filter { c -> c.isDigit() } },
-            label = { Text("Workers Needed") },
-            isError = showError && workersNeeded.isBlank(),
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            icon = Icons.Default.Group,
+            keyboardType = KeyboardType.Number
         )
 
         if (showError) {
@@ -271,6 +288,7 @@ fun WorkForm(
             Text("Submit")
         }
     }
+
 }
 
 fun saveWorkToFirestore(

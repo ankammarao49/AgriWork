@@ -2,6 +2,7 @@ package com.example.agriwork
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,7 +20,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -48,19 +54,19 @@ data class Work(
 @Composable
 fun WorkCategorySection(
     title: String,
-    categories: List<String>,
+    categoryItems: List<Pair<String, Int>>,
     onCategoryClick: (String) -> Unit
 ) {
     var showAll by remember { mutableStateOf(false) }
 
-    val categoriesToShow = if (showAll) categories else categories.take(4)
+    val categoriesToShow = if (showAll) categoryItems else categoryItems.take(4)
 
     Column {
         Text(title, fontFamily = Poppins, fontWeight = FontWeight.SemiBold)
         Spacer(modifier = Modifier.height(10.dp))
 
-        categoriesToShow.forEach { category ->
-            CategoryCard(category = category) {
+        categoriesToShow.forEach { (category, imageResId) ->
+            CategoryCard(category = category, image = painterResource(id = imageResId)) {
                 onCategoryClick(category)
             }
         }
@@ -70,8 +76,8 @@ fun WorkCategorySection(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 12.dp),
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF113F67)),
-            border = BorderStroke(1.dp, Color(0xFF113F67))
+//            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF113F67)),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
         ) {
             Text(if (showAll) "Show Less" else "See More")
         }
@@ -79,26 +85,54 @@ fun WorkCategorySection(
 }
 
 @Composable
-fun CategoryCard(category: String, onClick: () -> Unit) {
+fun CategoryCard(
+    category: String,
+    image: Painter,
+    onClick: () -> Unit
+) {
     Card(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp).clickable(onClick = onClick),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF34699A))
-    )
-    {
-        Column(modifier = Modifier.fillMaxWidth().padding(25.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(150.dp)
+            .padding(vertical = 10.dp)
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Image(
+                painter = image,
+                contentDescription = "Background Image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+
             Box(
-                modifier = Modifier.size(48.dp).background(color = Color(0xFF113F67), shape = CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(Icons.Default.AccountBox, contentDescription = "Category Icon", tint = Color.White)
-            }
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(Color.Transparent, Color.Black),
+                            startY = 50f
+                        )
+                    )
+            )
 
-            Spacer(modifier = Modifier.height(30.dp))
-
-            Text(text = category, fontFamily = Poppins, textAlign = TextAlign.Center, color = Color.White)
+            Text(
+                text = category,
+                fontFamily = Poppins,
+                color = Color.White,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 16.dp)
+            )
         }
     }
 }
+
 
 
 @Composable
@@ -340,14 +374,13 @@ fun WorkShowCard(
                         .fillMaxWidth()
                         .height(45.dp),
                     shape = RoundedCornerShape(10.dp),
-                    border = BorderStroke(1.dp, Color(0xFF37474F))
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
                 ) {
                     Text(
                         text = "View Applicants",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         fontFamily = Poppins,
-                        color = Color(0xFF37474F)
                     )
                 }
             }
