@@ -21,7 +21,7 @@ import com.google.firebase.auth.FirebaseAuth
 fun FarmerCategoriesScreen(navController: NavController) {
     val workCategories = listOf(
         "Harvesting", "Planting Seeds", "Planting Plants", "Weeding", "Watering",
-        "Plowing", "Fertilizing", "Digging"
+        "Plowing", "Fertilizing", "Digging", "Cotton harvest", "Mirchi harvest"
     )
 
     Column(

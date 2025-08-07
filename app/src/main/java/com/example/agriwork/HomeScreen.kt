@@ -3,6 +3,8 @@ package com.example.agriwork
 import GreetingWithName
 import LogoutConfirmationDialog
 import UserProfileDrawer
+import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
@@ -39,6 +41,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import com.example.agriwork.ui.components.PrimaryButton
 import com.example.agriwork.ui.theme.Poppins
@@ -177,6 +182,7 @@ fun HomeScreen(
                     )
                     {
                         GreetingWithName(user.name)
+                        NotificationButton()
                         when (user.role.lowercase()) {
                             "farmer" -> FarmerHomeContent(user, categoryItems, navController)
 
@@ -242,4 +248,36 @@ fun WorkerHomeContent(currentUser: AppUser, navController: NavHostController) {
 
         WorkerDashboardScreen(currentUser, navController)
     }
+}
+
+@Composable
+fun NotificationButton() {
+    val context = LocalContext.current
+    Button(onClick = {
+        sendNotification(context)
+    }) {
+        Text("Send Notification")
+    }
+}
+
+fun sendNotification(context: Context) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        val permissionGranted = ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (!permissionGranted) {
+            return // Don't send the notification if permission not granted
+        }
+    }
+
+    val builder = NotificationCompat.Builder(context, "my_channel_id")
+        .setSmallIcon(android.R.drawable.ic_dialog_info)
+        .setContentTitle("Hello!")
+        .setContentText("This is a test notification")
+        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+    val notificationManager = NotificationManagerCompat.from(context)
+    notificationManager.notify(1, builder.build())
 }
