@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.agriwork.data.model.AppUser
 import com.example.agriwork.ui.components.PrimaryButton
 import com.example.agriwork.ui.theme.Poppins
 import com.google.firebase.auth.FirebaseAuth

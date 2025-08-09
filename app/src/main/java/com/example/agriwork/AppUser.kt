@@ -1,15 +1,8 @@
 package com.example.agriwork
 
+import com.example.agriwork.data.model.AppUser
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-
-data class AppUser(
-    val uid: String = "",
-    val name: String = "",
-    val role: String = "", // either "farmer" or "worker"
-    val location: String = "",
-    val mobileNumber: String = ""
-)
 
 fun saveUserToFirestore(user: AppUser, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     val currentUser = FirebaseAuth.getInstance().currentUser

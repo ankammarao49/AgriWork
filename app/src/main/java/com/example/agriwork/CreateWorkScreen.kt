@@ -2,16 +2,35 @@ package com.example.agriwork
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,271 +58,435 @@ import androidx.navigation.NavController
 import com.google.firebase.firestore.FirebaseFirestore
 import androidx.compose.material.icons.filled.Work
 import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Terrain
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Landscape
+import androidx.compose.material.icons.filled.Send
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.VisualTransformation
+import com.example.agriwork.data.model.AppUser
+import com.example.agriwork.data.model.Work
+import com.example.agriwork.data.repository.WorkRepository.saveWorkToFirestore
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun CreateWorkScreen(navController: NavController, category: String = "") {
-    var submittedWork by remember { mutableStateOf<Work?>(null) }
     var currentUser by remember { mutableStateOf<AppUser?>(null) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     val context = LocalContext.current
 
-    // One-time fetch
     LaunchedEffect(Unit) {
         getUserFromFirestore(
-            onSuccess = { user -> currentUser = user },
+            onSuccess = { currentUser = it },
             onFailure = { error -> errorMessage = error.message }
         )
     }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        // Close Button Row
-        IconButton(
-            onClick = { navController.popBackStack() },
-            modifier = Modifier.align(Alignment.Start)
+    KeyboardDismissWrapper {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 0.dp)
         ) {
-            Icon(Icons.Default.Close, contentDescription = "Close")
-        }
-        when {
-            errorMessage != null -> {
-                Text("⚠️ Error: $errorMessage", color = MaterialTheme.colorScheme.error)
-            }
 
-            currentUser == null -> {
-                // Still loading
-                Text("Loading user...", style = MaterialTheme.typography.bodyMedium)
-            }
+            when {
+                errorMessage != null -> Text(
+                    "⚠️ Error: $errorMessage",
+                    color = MaterialTheme.colorScheme.error
+                )
 
-            else -> {
-                // Show the form once user is loaded
-                Column(modifier = Modifier.weight(1f)) {
+                currentUser == null -> CircularProgressIndicator()
+
+                else -> {
+                    IconButton(
+                        onClick = { navController.popBackStack() },
+                        modifier = Modifier.align(Alignment.Start)
+                    ) {
+                        Icon(Icons.Default.Close, contentDescription = "Close")
+                    }
+
                     WorkForm(
-                        onSubmit = { work ->
-                            submittedWork = work
-                        },
+                        currentUser = currentUser!!,
                         navController = navController,
                         context = context,
-                        currentUser = currentUser!!,
                         category = category
                     )
                 }
-
             }
         }
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WorkForm(
-    onSubmit: (Work) -> Unit,
     currentUser: AppUser,
     navController: NavController,
     context: Context,
     category: String
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
     var workTitle by remember { mutableStateOf(category.ifBlank { "" }) }
     var daysRequired by remember { mutableStateOf("") }
     var acres by remember { mutableStateOf("") }
     var workersNeeded by remember { mutableStateOf("") }
 
-    var showError by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var isSaving by remember { mutableStateOf(false) }
     var showSheet by remember { mutableStateOf(false) }
     var workPreview by remember { mutableStateOf<Work?>(null) }
+
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val focusManager = LocalFocusManager.current
 
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(20.dp)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(30.dp)
+        ) {
+            Text(
+                text = "Create Work Request",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold
+            )
 
-    // Sheet Content
+            Column(verticalArrangement = Arrangement.spacedBy(25.dp)) {
+                InputFieldWithIcon(
+                    label = "Work Title",
+                    value = workTitle,
+                    onValueChange = { workTitle = it.trim() },
+                    icon = Icons.Default.Work
+                )
+                InputFieldWithIcon(
+                    label = "Days Required",
+                    value = daysRequired,
+                    onValueChange = { daysRequired = it.filter(Char::isDigit) },
+                    icon = Icons.Default.CalendarToday,
+                    keyboardType = KeyboardType.Number
+                )
+                InputFieldWithIcon(
+                    label = "Acres",
+                    value = acres,
+                    onValueChange = {
+                        acres = it.takeIf { input -> input.matches(Regex("^\\d*\\.?\\d*$")) } ?: acres
+                    },
+                    icon = Icons.Default.Landscape,
+                    keyboardType = KeyboardType.Decimal
+                )
+                InputFieldWithIcon(
+                    label = "Workers Needed",
+                    value = workersNeeded,
+                    onValueChange = { workersNeeded = it.filter(Char::isDigit) },
+                    icon = Icons.Default.Group,
+                    keyboardType = KeyboardType.Number
+                )
+            }
+
+            Button(
+                onClick = {
+                    focusManager.clearFocus()
+                    if (workTitle.isNotBlank() && daysRequired.isNotBlank() &&
+                        acres.isNotBlank() && workersNeeded.isNotBlank()
+                    ) {
+                        workPreview = Work(
+                            farmer = currentUser,
+                            workTitle = workTitle,
+                            daysRequired = daysRequired.toInt(),
+                            acres = acres.toDouble(),
+                            workersNeeded = workersNeeded.toInt()
+                        )
+                        showSheet = true
+                    } else {
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                message = "⚠ Please fill in all fields correctly",
+                                withDismissAction = true
+                            )
+                        }
+                    }
+                },
+                enabled = !isSaving,
+                modifier = Modifier
+                    .height(50.dp)
+                    .width(150.dp)
+                    .align(Alignment.End),
+                shape = RoundedCornerShape(20.dp)
+            ) {
+                if (isSaving) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        strokeWidth = 2.dp
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Saving...")
+                } else {
+                    Text("Submit")
+                }
+            }
+        }
+    }
+
     if (showSheet && workPreview != null) {
-        ModalBottomSheet(
-            onDismissRequest = { showSheet = false },
+        WorkPreviewSheet(
             sheetState = sheetState,
-            containerColor = MaterialTheme.colorScheme.surface,
-            tonalElevation = 8.dp,
-            shape = MaterialTheme.shapes.large // Rounded corners
+            work = workPreview!!,
+            onEdit = { showSheet = false },
+            onConfirm = { /* save logic */ }
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun InputFieldWithIcon(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    icon: ImageVector,
+    showError: Boolean = false,
+    keyboardType: KeyboardType = KeyboardType.Text
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+    var hasBeenFocused by remember { mutableStateOf(false) }
+
+    LaunchedEffect(isFocused) {
+        if (isFocused) {
+            hasBeenFocused = true
+        }
+    }
+
+    val showError = hasBeenFocused && !isFocused && value.isBlank()
+
+
+//    val focusedBlue = Color(0xFF2196F3)
+    val successGreen = Color(0xFF43A047)
+
+    val borderColor = when {
+        showError -> MaterialTheme.colorScheme.error
+        isFocused -> Color.Black
+        value.isNotBlank() -> successGreen
+        else -> Color.Gray.copy(alpha = 0.5f)
+    }
+
+    BasicTextField(
+        value = value,
+        onValueChange = onValueChange,
+        singleLine = true,
+        interactionSource = interactionSource,
+        modifier = Modifier.fillMaxWidth(),
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = keyboardType),
+        decorationBox = { innerTextField ->
+            OutlinedTextFieldDefaults.DecorationBox(
+                value = value,
+                innerTextField = innerTextField,
+                enabled = true,
+                singleLine = true,
+                visualTransformation = VisualTransformation.None,
+                interactionSource = interactionSource,
+                isError = showError,
+                label = { Text(label) },
+                placeholder = {},
+                leadingIcon = { Icon(icon, contentDescription = "$label icon", tint = Color.Black) },
+                trailingIcon = {
+                    AnimatedVisibility(
+                        visible = value.isNotBlank() && !showError,
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = "Valid input",
+                            tint = successGreen
+                        )
+                    }
+                },
+                prefix = {},
+                suffix = {},
+//                supportingText = {
+//                    if (showError) {
+//                        Text(
+//                            text = "$label cannot be empty",
+//                            color = MaterialTheme.colorScheme.error,
+//                            style = MaterialTheme.typography.bodySmall,
+//                        )
+//                    }
+//                },
+                contentPadding = OutlinedTextFieldDefaults.contentPadding(),
+                container = {
+                    OutlinedTextFieldDefaults.Container(
+                        enabled = true,
+                        isError = showError && value.isBlank(),
+                        interactionSource = interactionSource,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = MaterialTheme.colorScheme.background,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.background,
+                            errorContainerColor = Color(0xFFFFEBEE),
+                            focusedBorderColor = borderColor,
+                            unfocusedBorderColor = borderColor,
+                            errorBorderColor = borderColor,
+                            cursorColor = borderColor
+                        ),
+                        shape = RoundedCornerShape(16.dp),
+                        focusedBorderThickness = 2.dp,
+                        unfocusedBorderThickness = 2.dp
+                    )
+                }
+            )
+        }
+    )
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun WorkPreviewSheet(
+    sheetState: androidx.compose.material3.SheetState,
+    work: Work,
+    onEdit: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    var isLoading by remember { mutableStateOf(false) }
+
+    ModalBottomSheet(
+        onDismissRequest = onEdit,
+        sheetState = sheetState,
+        containerColor = MaterialTheme.colorScheme.surface,
+        tonalElevation = 12.dp,
+        shape = MaterialTheme.shapes.extraLarge
+    ) {
+        AnimatedVisibility(
+            visible = true,
+            enter = fadeIn() + slideInVertically(initialOffsetY = { it / 6 }),
+            exit = fadeOut() + slideOutVertically(targetOffsetY = { it / 6 })
         ) {
             Column(
                 modifier = Modifier
-                    .padding(horizontal = 24.dp, vertical = 16.dp)
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text("Review Work Request", style = MaterialTheme.typography.titleLarge)
+                // Title
+                Text(
+                    text = "Review Work Request",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
 
-                Text("🪓 Work Title: ${workPreview!!.workTitle}")
-                Text("📅 Days Required: ${workPreview!!.daysRequired}")
-                Text("🌾 Acres: ${workPreview!!.acres}")
-                Text("👷 Workers Needed: ${workPreview!!.workersNeeded}")
-
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(top = 12.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                // Card with details
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    ),
+                    shape = RoundedCornerShape(16.dp),
                 ) {
-                    Button(
-                        onClick = {
-                            showSheet = false
-                        },
-                        modifier = Modifier.weight(1f)
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        PreviewRow(Icons.Default.Work, "Work Title", work.workTitle)
+                        PreviewRow(Icons.Default.CalendarToday, "Days Required", "${work.daysRequired} days")
+                        PreviewRow(Icons.Default.Landscape, "Acres", "${work.acres} acres")
+                        PreviewRow(Icons.Default.Group, "Workers Needed", "${work.workersNeeded}")
+                    }
+                }
+
+                // Buttons
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    OutlinedButton(
+                        onClick = onEdit,
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(12.dp)
                     ) {
                         Text("Edit")
                     }
 
                     Button(
                         onClick = {
-                            workPreview?.let { work ->
-                                saveWorkToFirestore(
-                                    work = work,
-                                    onSuccess = {
-                                        showSheet = false
-                                        Toast.makeText(context, "Work Submitted!", Toast.LENGTH_SHORT).show()
-                                        navController.navigate("home") {
-                                            popUpTo("createWork") { inclusive = true }
-                                        }
-                                    },
-                                    onFailure = { e ->
-                                        showSheet = false
-                                        Toast.makeText(context, "❌ Failed: ${e.message}", Toast.LENGTH_LONG).show()
-                                    }
-                                )
-                            } ?: run {
-                                showSheet = false
-                                Toast.makeText(context, "⚠️ Something went wrong. Try again.", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                        ,
-                        modifier = Modifier.weight(1f)
+                            isLoading = true
+                            onConfirm()
+                        },
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(12.dp),
+                        enabled = !isLoading
                     ) {
-                        Text("Confirm")
+                        if (isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                strokeWidth = 2.dp,
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        } else {
+                            Text("Confirm")
+                        }
                     }
-
                 }
             }
-
         }
     }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        Text("Create Work Request", style = MaterialTheme.typography.titleLarge)
-
-        @Composable
-        fun inputFieldWithIcon(
-            label: String,
-            value: String,
-            onValueChange: (String) -> Unit,
-            icon: ImageVector,
-            keyboardType: KeyboardType = KeyboardType.Text
-        ) {
-            OutlinedTextField(
-                value = value,
-                onValueChange = onValueChange,
-                label = { Text(label) },
-                leadingIcon = { Icon(icon, contentDescription = label) },
-                isError = showError && value.isBlank(),
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = keyboardType)
-            )
-        }
-
-        inputFieldWithIcon(
-            label = "Work Title",
-            value = workTitle,
-            onValueChange = { workTitle = it.trim() },
-            icon = Icons.Default.Work
-        )
-
-        inputFieldWithIcon(
-            label = "Days Required",
-            value = daysRequired,
-            onValueChange = { daysRequired = it.filter { c -> c.isDigit() } },
-            icon = Icons.Default.CalendarToday,
-            keyboardType = KeyboardType.Number
-        )
-
-        inputFieldWithIcon(
-            label = "Acres",
-            value = acres,
-            onValueChange = {
-                acres = it.takeIf { input -> input.matches(Regex("^\\d*\\.?\\d*\$")) } ?: acres
-            },
-            icon = Icons.Default.Landscape,
-            keyboardType = KeyboardType.Decimal
-        )
-
-        inputFieldWithIcon(
-            label = "Workers Needed",
-            value = workersNeeded,
-            onValueChange = { workersNeeded = it.filter { c -> c.isDigit() } },
-            icon = Icons.Default.Group,
-            keyboardType = KeyboardType.Number
-        )
-
-        if (showError) {
-            Text(
-                "Please fill in all fields correctly.",
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodySmall
-            )
-        }
-
-        Button(
-            onClick = {
-                focusManager.clearFocus(force = true)
-                if (
-                    workTitle.isNotBlank() &&
-                    daysRequired.isNotBlank() &&
-                    acres.isNotBlank() &&
-                    workersNeeded.isNotBlank()
-                ) {
-                    val work = Work(
-                        farmer = currentUser,
-                        workTitle = workTitle.trim(),
-                        daysRequired = daysRequired.toIntOrNull() ?: 0,
-                        acres = acres.toDoubleOrNull() ?: 0.0,
-                        workersNeeded = workersNeeded.toIntOrNull() ?: 0,
-                    )
-                    workPreview = work
-                    showSheet = true
-                } else {
-                    showError = true
-                }
-            },
-            modifier = Modifier.align(Alignment.End)
-        ) {
-            Text("Submit")
-        }
-    }
-
 }
 
-fun saveWorkToFirestore(
-    work: Work,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit
-) {
-    val db = FirebaseFirestore.getInstance()
+@Composable
+fun PreviewRow(icon: ImageVector, label: String, value: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = label,
+            tint = MaterialTheme.colorScheme.primary
+        )
+        Column {
+            Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(value, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
+        }
+    }
+}
 
-    db.collection("works") // You can name the collection anything you want
-        .add(work)
-        .addOnSuccessListener {
-            onSuccess()
-        }
-        .addOnFailureListener { exception ->
-            onFailure(exception)
-        }
+@Composable
+fun KeyboardDismissWrapper(content: @Composable () -> Unit) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = {
+                    focusManager.clearFocus()
+                    keyboardController?.hide()
+                })
+            }
+    ) {
+        content()
+    }
 }

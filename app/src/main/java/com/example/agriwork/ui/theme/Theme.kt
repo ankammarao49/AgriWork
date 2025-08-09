@@ -23,23 +23,32 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = LightGreen,
-    onPrimary = TextOnPrimary,
-    primaryContainer = LightGreenContainer,
+    primary = Color(0xFF3E5F45),            // Deep earthy green
+    onPrimary = Color.White,
 
-    secondary = Amber,
-    onSecondary = TextOnSecondary,
-    secondaryContainer = AmberContainer,
+    primaryContainer = Color(0xFF5E936C),   // Softer muted green
+    onPrimaryContainer = Color.White,
 
-    background = AppBackground,
-    onBackground = TextPrimary,
+    secondary = Color(0xFFD4A373),          // Warm wheat/golden brown
+    onSecondary = Color.White,
 
-    surface = AppSurface,
-    onSurface = TextSecondary,
+    secondaryContainer = Color(0xFFF1D9B5), // Pale wheat tone
+    onSecondaryContainer = Color(0xFF3E2E1E),
 
-    error = AppError,
+    background = Color(0xFFF7F6F3),         // Soft off-white with warm tint
+    onBackground = Color(0xFF2E3B2C),       // Deep natural green-gray
+
+    surface = Color(0xFFF7F6F3),            // Matches background for consistency
+    onSurface = Color(0xFF3E5F45),
+
+    surfaceVariant = Color(0xFFE8F5E9),     // Light leafy green for cards
+    onSurfaceVariant = Color(0xFF2E3B2C),
+
+    error = Color(0xFFD32F2F),
     onError = Color.White
 )
+
+
 @Composable
 fun AgriWorkTheme(
     darkTheme: Boolean = false, // Force Light Mode

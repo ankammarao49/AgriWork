@@ -47,6 +47,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.agriwork.data.model.AppUser
+import com.example.agriwork.data.model.Work
 import com.example.agriwork.ui.theme.Poppins
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldValue

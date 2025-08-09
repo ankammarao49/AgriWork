@@ -36,7 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.agriwork.AppUser
+import com.example.agriwork.data.model.AppUser
 import com.example.agriwork.ui.theme.Poppins
 import java.time.LocalTime
 
@@ -51,14 +51,22 @@ fun GreetingWithName(name: String) {
         else -> "Good Night"
     }
 
-    Text(
-        text = "$greeting\n${name}",
-        fontFamily = Poppins,
-        fontWeight = FontWeight.Bold,
-        overflow = TextOverflow.Ellipsis,
-        fontSize = 30.sp,
-        lineHeight = 36.sp
-    )
+    Column {
+        Text(
+            text = greeting,
+            fontFamily = Poppins,
+            fontWeight = FontWeight.Bold,
+            overflow = TextOverflow.Ellipsis,
+            fontSize = 25.sp,
+        )
+        Text(
+            text = name,
+            fontFamily = Poppins,
+            fontWeight = FontWeight.Bold,
+            overflow = TextOverflow.Ellipsis,
+            fontSize = 25.sp,
+        )
+    }
 }
 
 @Composable
@@ -73,14 +81,15 @@ fun UserProfileDrawer(
             .width(300.dp)
     ){
         Column(
-            modifier = Modifier.fillMaxHeight()
-                .padding(20.dp),
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(15.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                "Your Profile",
+                "Profile",
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(bottom = 12.dp)
+                modifier = Modifier.padding(bottom = 12.dp, start = 5.dp, top = 10.dp)
             )
             Card(
                 modifier = Modifier.fillMaxWidth(),

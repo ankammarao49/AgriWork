@@ -27,7 +27,7 @@ import com.google.firebase.auth.FirebaseAuth
 fun EntryScreen(onGetStarted: () -> Unit) {
     val systemUiController = rememberSystemUiController()
     val bgcolor = MaterialTheme.colorScheme.primary
-    var  textColor = Color.White
+    val textColor = Color.White
 
     SideEffect {
         systemUiController.setStatusBarColor(

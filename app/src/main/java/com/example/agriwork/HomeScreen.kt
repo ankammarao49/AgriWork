@@ -1,8 +1,11 @@
 package com.example.agriwork
 
+import FarmerDashboardScreen
 import GreetingWithName
 import LogoutConfirmationDialog
 import UserProfileDrawer
+import WorkCategorySection
+import WorkerDashboardScreen
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
@@ -40,6 +43,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.agriwork.data.model.AppUser
 import com.example.agriwork.ui.components.PrimaryButton
 import com.example.agriwork.ui.theme.Poppins
 import com.google.firebase.auth.FirebaseAuth
@@ -117,12 +121,14 @@ fun HomeScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 14.dp, vertical = 5.dp)
+                .padding(horizontal = 14.dp, vertical = 8.dp)
         ) {
             // Top App Bar as first scrollable item
             item {
                 TopAppBar(
-                    title = { Text("Home", modifier = Modifier.padding(start = 8.dp)) },
+                    title = {
+                        Text("Home", modifier = Modifier.padding(start = 8.dp), color = Color.Black)
+                    },
                     navigationIcon = {
                         IconButton(
                             onClick = {
@@ -130,13 +136,13 @@ fun HomeScreen(
                             },
                             modifier = Modifier
                                 .background(Color.Black, shape = CircleShape)
-                                .size(35.dp)
+                                .size(40.dp)
                         ) {
                             Icon(
                                 Icons.Default.Menu,
                                 contentDescription = "Open Drawer",
                                 tint = Color.White,
-                                modifier = Modifier.size(25.dp))
+                                modifier = Modifier.size(28.dp))
                         }
                     }
                 )
@@ -173,7 +179,7 @@ fun HomeScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 10.dp, vertical = 24.dp),
+                            .padding(horizontal = 7.dp, vertical = 24.dp),
                     )
                     {
                         GreetingWithName(user.name)
