@@ -1,15 +1,12 @@
-package com.example.agriwork
+package com.example.agriwork.ui.screens
 
 import android.content.Context
-import android.widget.Toast
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
@@ -30,7 +27,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,7 +34,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -55,23 +50,20 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.google.firebase.firestore.FirebaseFirestore
 import androidx.compose.material.icons.filled.Work
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Terrain
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Landscape
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -80,7 +72,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import com.example.agriwork.data.model.AppUser
 import com.example.agriwork.data.model.Work
-import com.example.agriwork.data.repository.WorkRepository.saveWorkToFirestore
+import com.example.agriwork.data.utils.KeyboardDismissWrapper
+import com.example.agriwork.getUserFromFirestore
+import com.example.agriwork.ui.components.CustomTextField
 import kotlinx.coroutines.launch
 
 
@@ -96,6 +90,7 @@ fun CreateWorkScreen(navController: NavController, category: String = "") {
             onFailure = { error -> errorMessage = error.message }
         )
     }
+
     KeyboardDismissWrapper {
         Column(
             modifier = Modifier
@@ -165,44 +160,49 @@ fun WorkForm(
                 .background(Color.White)
                 .padding(20.dp)
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(30.dp)
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             Text(
-                text = "Create Work Request",
+                text = "Post a Work",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
 
             Column(verticalArrangement = Arrangement.spacedBy(25.dp)) {
-                InputFieldWithIcon(
+                CustomTextField(
                     label = "Work Title",
                     value = workTitle,
                     onValueChange = { workTitle = it.trim() },
-                    icon = Icons.Default.Work
+                    icon = Icons.Default.Work,
+                    description = "What is the name of the work?"
                 )
-                InputFieldWithIcon(
+                CustomTextField(
                     label = "Days Required",
                     value = daysRequired,
                     onValueChange = { daysRequired = it.filter(Char::isDigit) },
                     icon = Icons.Default.CalendarToday,
-                    keyboardType = KeyboardType.Number
+                    keyboardType = KeyboardType.Number,
+                    description = "How many days will this work take to finish?"
                 )
-                InputFieldWithIcon(
+                CustomTextField(
                     label = "Acres",
                     value = acres,
                     onValueChange = {
                         acres = it.takeIf { input -> input.matches(Regex("^\\d*\\.?\\d*$")) } ?: acres
                     },
                     icon = Icons.Default.Landscape,
-                    keyboardType = KeyboardType.Decimal
+                    keyboardType = KeyboardType.Decimal,
+                    description = "Enter the size of the land area in acres."
                 )
-                InputFieldWithIcon(
+                CustomTextField(
                     label = "Workers Needed",
                     value = workersNeeded,
                     onValueChange = { workersNeeded = it.filter(Char::isDigit) },
                     icon = Icons.Default.Group,
-                    keyboardType = KeyboardType.Number
+                    keyboardType = KeyboardType.Number,
+                    description = "How many people are needed to do this work?"
                 )
+
             }
 
             Button(
@@ -233,7 +233,7 @@ fun WorkForm(
                     .height(50.dp)
                     .width(150.dp)
                     .align(Alignment.End),
-                shape = RoundedCornerShape(20.dp)
+                shape = RoundedCornerShape(15.dp)
             ) {
                 if (isSaving) {
                     CircularProgressIndicator(
@@ -262,110 +262,8 @@ fun WorkForm(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InputFieldWithIcon(
-    label: String,
-    value: String,
-    onValueChange: (String) -> Unit,
-    icon: ImageVector,
-    showError: Boolean = false,
-    keyboardType: KeyboardType = KeyboardType.Text
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val isFocused by interactionSource.collectIsFocusedAsState()
-    var hasBeenFocused by remember { mutableStateOf(false) }
-
-    LaunchedEffect(isFocused) {
-        if (isFocused) {
-            hasBeenFocused = true
-        }
-    }
-
-    val showError = hasBeenFocused && !isFocused && value.isBlank()
-
-
-//    val focusedBlue = Color(0xFF2196F3)
-    val successGreen = Color(0xFF43A047)
-
-    val borderColor = when {
-        showError -> MaterialTheme.colorScheme.error
-        isFocused -> Color.Black
-        value.isNotBlank() -> successGreen
-        else -> Color.Gray.copy(alpha = 0.5f)
-    }
-
-    BasicTextField(
-        value = value,
-        onValueChange = onValueChange,
-        singleLine = true,
-        interactionSource = interactionSource,
-        modifier = Modifier.fillMaxWidth(),
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = keyboardType),
-        decorationBox = { innerTextField ->
-            OutlinedTextFieldDefaults.DecorationBox(
-                value = value,
-                innerTextField = innerTextField,
-                enabled = true,
-                singleLine = true,
-                visualTransformation = VisualTransformation.None,
-                interactionSource = interactionSource,
-                isError = showError,
-                label = { Text(label) },
-                placeholder = {},
-                leadingIcon = { Icon(icon, contentDescription = "$label icon", tint = Color.Black) },
-                trailingIcon = {
-                    AnimatedVisibility(
-                        visible = value.isNotBlank() && !showError,
-                        enter = fadeIn(),
-                        exit = fadeOut()
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Check,
-                            contentDescription = "Valid input",
-                            tint = successGreen
-                        )
-                    }
-                },
-                prefix = {},
-                suffix = {},
-//                supportingText = {
-//                    if (showError) {
-//                        Text(
-//                            text = "$label cannot be empty",
-//                            color = MaterialTheme.colorScheme.error,
-//                            style = MaterialTheme.typography.bodySmall,
-//                        )
-//                    }
-//                },
-                contentPadding = OutlinedTextFieldDefaults.contentPadding(),
-                container = {
-                    OutlinedTextFieldDefaults.Container(
-                        enabled = true,
-                        isError = showError && value.isBlank(),
-                        interactionSource = interactionSource,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedContainerColor = MaterialTheme.colorScheme.background,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.background,
-                            errorContainerColor = Color(0xFFFFEBEE),
-                            focusedBorderColor = borderColor,
-                            unfocusedBorderColor = borderColor,
-                            errorBorderColor = borderColor,
-                            cursorColor = borderColor
-                        ),
-                        shape = RoundedCornerShape(16.dp),
-                        focusedBorderThickness = 2.dp,
-                        unfocusedBorderThickness = 2.dp
-                    )
-                }
-            )
-        }
-    )
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
 fun WorkPreviewSheet(
-    sheetState: androidx.compose.material3.SheetState,
+    sheetState: SheetState,
     work: Work,
     onEdit: () -> Unit,
     onConfirm: () -> Unit
@@ -375,7 +273,7 @@ fun WorkPreviewSheet(
     ModalBottomSheet(
         onDismissRequest = onEdit,
         sheetState = sheetState,
-        containerColor = MaterialTheme.colorScheme.surface,
+        containerColor = Color.White,
         tonalElevation = 12.dp,
         shape = MaterialTheme.shapes.extraLarge
     ) {
@@ -387,12 +285,12 @@ fun WorkPreviewSheet(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 16.dp),
+                    .padding(horizontal = 30.dp, vertical = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 // Title
                 Text(
-                    text = "Review Work Request",
+                    text = "Review",
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
@@ -401,7 +299,7 @@ fun WorkPreviewSheet(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface
+                        containerColor = Color.Transparent
                     ),
                     shape = RoundedCornerShape(16.dp),
                 ) {
@@ -469,24 +367,5 @@ fun PreviewRow(icon: ImageVector, label: String, value: String) {
             Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Text(value, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
         }
-    }
-}
-
-@Composable
-fun KeyboardDismissWrapper(content: @Composable () -> Unit) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = {
-                    focusManager.clearFocus()
-                    keyboardController?.hide()
-                })
-            }
-    ) {
-        content()
     }
 }

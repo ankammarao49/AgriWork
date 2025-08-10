@@ -17,6 +17,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -41,15 +42,17 @@ fun WorkShowCard(
 ) {
     Card(
         modifier = modifier.fillMaxWidth().padding(bottom = 20.dp),
-        shape = RoundedCornerShape(26.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(2.dp)
     ) {
-        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp)) {
+        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp)) {
 
             // Header with prominent Workers Needed
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Column {
                     Text(
@@ -67,15 +70,15 @@ fun WorkShowCard(
                 }
 
                 Surface(
-                    color = Color(0xFFE0EEFF),
-                    shape = RoundedCornerShape(8.dp),
+                    color = Color(0xFFf0fdfa),
+                    shape = RoundedCornerShape(7.dp),
                 ) {
                     Text(
                         text = "$workersNeeded workers needed",
                         fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                        color = Color(0xFF3F51B5), // deep orange
+                        color = Color(0xFF134e4a),
                         fontFamily = Poppins
                     )
                 }
@@ -84,7 +87,7 @@ fun WorkShowCard(
             Divider(color = Color(0xFFE0E0E0), thickness = 1.dp, modifier = Modifier.padding(vertical = 12.dp))
 
             // Detail Info Grid
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 DetailRow(label = "Location", value = location)
                 DetailRow(label = "Time Required", value = "$daysRequired day${if (daysRequired > 1) "s" else ""}")
                 DetailRow(label = "Land Area", value = "$acres acres") // Moved acres down here
@@ -100,6 +103,7 @@ fun WorkShowCard(
                     onClick = onApplyClick,
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(vertical = 5.dp)
                         .height(45.dp),
                     shape = RoundedCornerShape(10.dp)
                 ) {
@@ -116,8 +120,9 @@ fun WorkShowCard(
                     onClick = onViewApplicantsClick,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(45.dp),
-                    shape = RoundedCornerShape(15.dp),
+                        .padding(vertical = 5.dp)
+                        .height(50.dp),
+                    shape = RoundedCornerShape(10.dp),
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
                 ) {
                     Text(
@@ -143,7 +148,7 @@ fun DetailRow(label: String, value: String) {
             text = label,
             fontSize = 14.sp,
             fontFamily = Poppins,
-            color = Color.DarkGray
+            color = Color(0xFF1c1917)
         )
         Text(
             text = value,

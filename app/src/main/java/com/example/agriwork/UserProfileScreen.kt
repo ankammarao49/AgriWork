@@ -1,5 +1,6 @@
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -7,22 +8,28 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -79,36 +86,41 @@ fun UserProfileDrawer(
         drawerContainerColor = MaterialTheme.colorScheme.surface,
         modifier = Modifier
             .width(300.dp)
+            .fillMaxHeight()
     ){
         Column(
             modifier = Modifier
                 .fillMaxHeight()
                 .padding(15.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                "Profile",
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(bottom = 12.dp, start = 5.dp, top = 10.dp)
-            )
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
-            )
-            {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    userData?.let {
-                        ProfileItem(icon = Icons.Default.Person, label = it.name)
-                        ProfileItem(icon = Icons.Default.Phone, label = it.mobileNumber)
-                        ProfileItem(icon = Icons.Default.LocationOn, label = it.location)
-                        ProfileItem(
-                            icon = Icons.Default.AccountBox,
-                            label = it.role.replaceFirstChar { c -> c.uppercase() }
-                        )
-                    } ?: Text("Loading...", style = MaterialTheme.typography.bodyMedium)
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    "Profile",
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(bottom = 12.dp, start = 5.dp, top = 10.dp)
+                )
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = Color.White)
+                )
+                {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        userData?.let {
+                            ProfileItem(icon = Icons.Default.Person, label = it.name)
+                            ProfileItem(icon = Icons.Default.Phone, label = it.mobileNumber)
+                            ProfileItem(icon = Icons.Default.LocationOn, label = it.location)
+                            ProfileItem(
+                                icon = Icons.Default.AccountBox,
+                                label = it.role.replaceFirstChar { c -> c.uppercase() }
+                            )
+                        } ?: Text("Loading...", style = MaterialTheme.typography.bodyMedium)
+                    }
                 }
             }
-
             // 🔴 Logout Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -119,11 +131,11 @@ fun UserProfileDrawer(
                     onClick = onLogoutClick,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp),
+                        .height(50.dp),
                     colors = ButtonDefaults.textButtonColors(contentColor = Color.Red)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Close,
+                        imageVector = Icons.AutoMirrored.Filled.ExitToApp,
                         contentDescription = "Logout",
                         tint = Color.Red
                     )
@@ -164,13 +176,67 @@ fun LogoutConfirmationDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
+        icon = {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ExitToApp,  // classic logout icon
+                contentDescription = "Logout Icon",
+                tint = MaterialTheme.colorScheme.error,
+                modifier = Modifier.size(40.dp)
+            )
+        },
+        title = {
+            Text(
+                "Confirm Logout",
+                fontFamily = Poppins,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 20.sp,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        },
+        text = {
+            Text(
+                "Are you sure you want to logout?",
+                fontFamily = Poppins,
+                fontWeight = FontWeight.Normal,
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        },
         confirmButton = {
-            TextButton(onClick = onConfirm) { Text("Yes") }
+            Button(
+                onClick = onConfirm,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = Color.White
+                ),
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+                    .height(44.dp)
+            ) {
+                Text("Logout", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("No") }
+            OutlinedButton(
+                onClick = onDismiss,
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = Color.Black,
+                ),
+                border = BorderStroke(1.dp, Color.Black),
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+                    .height(44.dp)
+            ) {
+                Text("Cancel", fontWeight = FontWeight.Medium, fontSize = 16.sp)
+            }
         },
-        title = { Text("Confirm Logout", fontFamily = Poppins, fontWeight = FontWeight.SemiBold) },
-        text = { Text("Are you sure you want to logout?") }
+        containerColor = Color(0xFFF5F5F4),
+        tonalElevation = 6.dp,
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.padding(16.dp)
     )
 }

@@ -1,11 +1,14 @@
 package com.example.agriwork
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -57,11 +60,20 @@ import com.google.firebase.firestore.firestore
 @Composable
 fun ApplicantsScreen(workId: String, navController: NavHostController) {
     val db = Firebase.firestore
+    var currentUser by remember { mutableStateOf<AppUser?>(null) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
     var work by remember { mutableStateOf<Work?>(null) }
     var applicants by remember { mutableStateOf<List<AppUser>>(emptyList()) }
     var selectedApplicants by remember { mutableStateOf<List<String>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     var selectedTab by remember { mutableStateOf("Applied") }
+
+    LaunchedEffect(Unit) {
+        getUserFromFirestore(
+            onSuccess = { currentUser = it },
+            onFailure = { error -> errorMessage = error.message }
+        )
+    }
 
     LaunchedEffect(workId) {
         db.collection("works").document(workId).get()
@@ -128,33 +140,49 @@ fun ApplicantsScreen(workId: String, navController: NavHostController) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp),
+                    .height(48.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 listOf("Applied", "Selected").forEach { tab ->
                     val isActive = tab == selectedTab
-                    OutlinedButton(
-                        onClick = { selectedTab = tab },
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = if (isActive) Color.Black else Color.White,
-                            contentColor = if (isActive) Color.White else Color.Black
-                        ),
-                        border = BorderStroke(1.dp, if (isActive) Color.Black else Color.Gray),
-                        shape = RoundedCornerShape(12.dp),
+
+                    Box(
                         modifier = Modifier
                             .weight(1f)
-                            .height(40.dp)
+                            .fillMaxHeight()
+                            .clickable { selectedTab = tab }
+                            .background(
+                                color = if (isActive) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f) else Color.Transparent,
+                                shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
+                            ),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            text = tab,
-                            fontFamily = Poppins,
-                            fontSize = 14.sp,
-                            fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Normal
-                        )
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = tab,
+                                fontFamily = Poppins,
+                                fontSize = 14.sp,
+                                fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Normal,
+                                color = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            if (isActive) {
+                                // The little underline indicator
+                                Box(
+                                    modifier = Modifier
+                                        .height(3.dp)
+                                        .width(24.dp)
+                                        .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(1.5.dp))
+                                )
+                            } else {
+                                Spacer(modifier = Modifier.height(3.dp)) // keep height consistent
+                            }
+                        }
                     }
                 }
             }
         }
+
 
 
         // 🌀 Loading Indicator
@@ -174,13 +202,18 @@ fun ApplicantsScreen(workId: String, navController: NavHostController) {
 
             if (filteredList.isEmpty()) {
                 item {
-                    Text("No ${selectedTab.lowercase()} applicants.", fontFamily = Poppins)
+                    Box(
+                        modifier = Modifier.fillMaxSize().padding(start = 10.dp),
+                    ) {
+                        Text("No ${selectedTab.lowercase()} applicants.", fontFamily = Poppins)
+                    }
                 }
             } else {
                 items(filteredList) { user ->
                     ApplicantCard(
                         user = user,
                         isAlreadySelected = selectedApplicants.contains(user.uid),
+                        showApproveButton = currentUser?.uid == work?.farmer?.uid,
                         onApproveClick = {
                             approveApplicant(
                                 workId = workId,
@@ -272,7 +305,12 @@ fun TwoColumnRow(label: String, value: String) {
 }
 
 @Composable
-fun ApplicantCard(user: AppUser, isAlreadySelected: Boolean, onApproveClick: () -> Unit) {
+fun ApplicantCard(
+    user: AppUser,
+    isAlreadySelected: Boolean,
+    showApproveButton: Boolean,
+    onApproveClick: () -> Unit
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
@@ -284,7 +322,7 @@ fun ApplicantCard(user: AppUser, isAlreadySelected: Boolean, onApproveClick: () 
             InfoRow(label = "Location", value = user.location)
             InfoRow(label = "Mobile", value = user.mobileNumber)
 
-            if (!isAlreadySelected) {
+            if (showApproveButton && !isAlreadySelected) {
                 Spacer(modifier = Modifier.height(10.dp))
                 Button(
                     onClick = onApproveClick,
@@ -293,7 +331,7 @@ fun ApplicantCard(user: AppUser, isAlreadySelected: Boolean, onApproveClick: () 
                 ) {
                     Text("Approve", fontFamily = Poppins, color = Color.White)
                 }
-            } else {
+            } else if (isAlreadySelected) {
                 Spacer(modifier = Modifier.height(10.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(

@@ -1,8 +1,11 @@
 package com.example.agriwork
 
+import FarmerDashboardScreen
 import GreetingWithName
 import LogoutConfirmationDialog
 import UserProfileDrawer
+import WorkCategorySection
+import WorkerDashboardScreen
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
@@ -45,6 +48,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
+import com.example.agriwork.data.model.AppUser
 import com.example.agriwork.ui.components.PrimaryButton
 import com.example.agriwork.ui.theme.Poppins
 import com.google.firebase.auth.FirebaseAuth
@@ -182,7 +186,6 @@ fun HomeScreen(
                     )
                     {
                         GreetingWithName(user.name)
-                        NotificationButton()
                         when (user.role.lowercase()) {
                             "farmer" -> FarmerHomeContent(user, categoryItems, navController)
 

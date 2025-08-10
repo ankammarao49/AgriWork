@@ -23,7 +23,7 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Color(0xFF3E5F45),            // Deep earthy green
+    primary = Color(0xFF047857),            // Deep earthy green
     onPrimary = Color.White,
 
     primaryContainer = Color(0xFF5E936C),   // Softer muted green
@@ -39,7 +39,7 @@ private val LightColorScheme = lightColorScheme(
     onBackground = Color(0xFF2E3B2C),       // Deep natural green-gray
 
     surface = Color(0xFFF7F6F3),            // Matches background for consistency
-    onSurface = Color(0xFF3E5F45),
+    onSurface = Color(0xff44403c),
 
     surfaceVariant = Color(0xFFE8F5E9),     // Light leafy green for cards
     onSurfaceVariant = Color(0xFF2E3B2C),
