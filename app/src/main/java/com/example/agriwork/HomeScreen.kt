@@ -1,11 +1,10 @@
 package com.example.agriwork
 
-import FarmerDashboardScreen
 import GreetingWithName
 import LogoutConfirmationDialog
 import UserProfileDrawer
-import WorkCategorySection
-import WorkerDashboardScreen
+import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
@@ -42,8 +41,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
-import com.example.agriwork.data.model.AppUser
 import com.example.agriwork.ui.components.PrimaryButton
 import com.example.agriwork.ui.theme.Poppins
 import com.google.firebase.auth.FirebaseAuth
@@ -121,14 +122,12 @@ fun HomeScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 14.dp, vertical = 8.dp)
+                .padding(horizontal = 14.dp, vertical = 5.dp)
         ) {
             // Top App Bar as first scrollable item
             item {
                 TopAppBar(
-                    title = {
-                        Text("Home", modifier = Modifier.padding(start = 8.dp), color = Color.Black)
-                    },
+                    title = { Text("Home", modifier = Modifier.padding(start = 8.dp)) },
                     navigationIcon = {
                         IconButton(
                             onClick = {
@@ -136,13 +135,13 @@ fun HomeScreen(
                             },
                             modifier = Modifier
                                 .background(Color.Black, shape = CircleShape)
-                                .size(40.dp)
+                                .size(35.dp)
                         ) {
                             Icon(
                                 Icons.Default.Menu,
                                 contentDescription = "Open Drawer",
                                 tint = Color.White,
-                                modifier = Modifier.size(28.dp))
+                                modifier = Modifier.size(25.dp))
                         }
                     }
                 )
@@ -179,10 +178,11 @@ fun HomeScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 7.dp, vertical = 24.dp),
+                            .padding(horizontal = 10.dp, vertical = 24.dp),
                     )
                     {
                         GreetingWithName(user.name)
+                        NotificationButton()
                         when (user.role.lowercase()) {
                             "farmer" -> FarmerHomeContent(user, categoryItems, navController)
 
@@ -248,4 +248,36 @@ fun WorkerHomeContent(currentUser: AppUser, navController: NavHostController) {
 
         WorkerDashboardScreen(currentUser, navController)
     }
+}
+
+@Composable
+fun NotificationButton() {
+    val context = LocalContext.current
+    Button(onClick = {
+        sendNotification(context)
+    }) {
+        Text("Send Notification")
+    }
+}
+
+fun sendNotification(context: Context) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        val permissionGranted = ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (!permissionGranted) {
+            return // Don't send the notification if permission not granted
+        }
+    }
+
+    val builder = NotificationCompat.Builder(context, "my_channel_id")
+        .setSmallIcon(android.R.drawable.ic_dialog_info)
+        .setContentTitle("Hello!")
+        .setContentText("This is a test notification")
+        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+    val notificationManager = NotificationManagerCompat.from(context)
+    notificationManager.notify(1, builder.build())
 }
