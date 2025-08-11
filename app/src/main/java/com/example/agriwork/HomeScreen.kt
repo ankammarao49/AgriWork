@@ -154,14 +154,15 @@ fun HomeScreen(
             // Loading
             if (isLoading) {
                 item {
-                    Column(
+                    Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                            .fillMaxSize()
+                            .height(500.dp),
+                        contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator()
+                        CircularProgressIndicator(color = Color.Black)
                     }
+
                 }
             }
 

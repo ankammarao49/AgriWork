@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -72,17 +73,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import com.example.agriwork.data.model.AppUser
 import com.example.agriwork.data.model.Work
+import com.example.agriwork.data.repository.WorkRepository.saveWorkToFirestore
 import com.example.agriwork.data.utils.KeyboardDismissWrapper
 import com.example.agriwork.getUserFromFirestore
 import com.example.agriwork.ui.components.CustomTextField
+import com.example.agriwork.ui.components.WorkTitleInput
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 
 @Composable
 fun CreateWorkScreen(navController: NavController, category: String = "") {
+    val categories = listOf(
+        "Plowing", "Sowing", "Weeding", "Irrigation",
+        "Harvesting", "Fertilizer", "Fence Repair", "Planting", "Digging", "Cutting"
+    )
     var currentUser by remember { mutableStateOf<AppUser?>(null) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     val context = LocalContext.current
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         getUserFromFirestore(
@@ -91,36 +102,56 @@ fun CreateWorkScreen(navController: NavController, category: String = "") {
         )
     }
 
-    KeyboardDismissWrapper {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-                .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 0.dp)
-        ) {
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { innerPadding ->
 
+        KeyboardDismissWrapper {
             when {
                 errorMessage != null -> Text(
                     "⚠️ Error: $errorMessage",
-                    color = MaterialTheme.colorScheme.error
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(innerPadding)
                 )
 
-                currentUser == null -> CircularProgressIndicator()
+                currentUser == null -> Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = Color.Black)
+                }
 
                 else -> {
-                    IconButton(
-                        onClick = { navController.popBackStack() },
-                        modifier = Modifier.align(Alignment.Start)
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.White)
+                            .padding(innerPadding)  // <-- apply scaffold padding here
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        horizontalAlignment = Alignment.Start
                     ) {
-                        Icon(Icons.Default.Close, contentDescription = "Close")
+                        item {
+                            IconButton(
+                                onClick = { navController.popBackStack() },
+                            ) {
+                                Icon(Icons.Default.Close, contentDescription = "Close")
+                            }
+                        }
+                        item {
+                            WorkForm(
+                                currentUser = currentUser!!,
+                                navController = navController,
+                                context = context,
+                                category = category,
+                                categories = categories,
+                                snackbarHostState = snackbarHostState,  // pass snackbar host
+                                scope = scope                              // pass coroutine scope
+                            )
+                        }
                     }
-
-                    WorkForm(
-                        currentUser = currentUser!!,
-                        navController = navController,
-                        context = context,
-                        category = category
-                    )
                 }
             }
         }
@@ -133,15 +164,23 @@ fun WorkForm(
     currentUser: AppUser,
     navController: NavController,
     context: Context,
-    category: String
+    category: String,
+    categories: List<String>,
+    snackbarHostState: SnackbarHostState,
+    scope: CoroutineScope
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
 
     var workTitle by remember { mutableStateOf(category.ifBlank { "" }) }
+    var workTitleError by remember { mutableStateOf(false) }
+
     var daysRequired by remember { mutableStateOf("") }
+    var daysRequiredError by remember { mutableStateOf(false) }
+
     var acres by remember { mutableStateOf("") }
+    var acresError by remember { mutableStateOf(false) }
+
     var workersNeeded by remember { mutableStateOf("") }
+    var workersNeededError by remember { mutableStateOf(false) }
 
     var isSaving by remember { mutableStateOf(false) }
     var showSheet by remember { mutableStateOf(false) }
@@ -150,115 +189,184 @@ fun WorkForm(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val focusManager = LocalFocusManager.current
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .background(Color.White)
-                .padding(20.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            Text(
-                text = "Post a Work",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)
+            .padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    )
+    {
+        Text(
+            text = "Post a Work",
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold
+        )
+
+        Column(verticalArrangement = Arrangement.spacedBy(25.dp)) {
+
+            // Work Title
+//                CustomTextField(
+//                    label = "Work Title",
+//                    value = workTitle,
+//                    onValueChange = {
+//                        workTitle = it
+//                        workTitleError = it.isBlank() || it.length < 3
+//                    },
+//                    icon = Icons.Default.Work,
+//                    description = "What is the name of the work?",
+//                    externalError = workTitleError,
+//                    externalErrorMessage = when {
+//                        workTitle.isBlank() -> "Title cannot be empty"
+//                        workTitle.length < 3 -> "Title must have at least 3 characters"
+//                        else -> ""
+//                    }
+//                )
+            WorkTitleInput(
+                label = "Work Title",
+                value = workTitle,
+                onValueChange = {
+                    workTitle = it
+                    workTitleError = it.isBlank() || it.length < 3
+                },
+                icon = Icons.Default.Work,
+                description = "What is the name of the work?",
+                suggestions = categories, // <-- List<String> with your autocomplete items
+                isError = workTitleError,
+                errorMessage = when {
+                    workTitle.isBlank() -> "Title cannot be empty"
+                    workTitle.length < 3 -> "Title must have at least 3 characters"
+                    else -> ""
+                }
             )
 
-            Column(verticalArrangement = Arrangement.spacedBy(25.dp)) {
-                CustomTextField(
-                    label = "Work Title",
-                    value = workTitle,
-                    onValueChange = { workTitle = it.trim() },
-                    icon = Icons.Default.Work,
-                    description = "What is the name of the work?"
-                )
-                CustomTextField(
-                    label = "Days Required",
-                    value = daysRequired,
-                    onValueChange = { daysRequired = it.filter(Char::isDigit) },
-                    icon = Icons.Default.CalendarToday,
-                    keyboardType = KeyboardType.Number,
-                    description = "How many days will this work take to finish?"
-                )
-                CustomTextField(
-                    label = "Acres",
-                    value = acres,
-                    onValueChange = {
-                        acres = it.takeIf { input -> input.matches(Regex("^\\d*\\.?\\d*$")) } ?: acres
-                    },
-                    icon = Icons.Default.Landscape,
-                    keyboardType = KeyboardType.Decimal,
-                    description = "Enter the size of the land area in acres."
-                )
-                CustomTextField(
-                    label = "Workers Needed",
-                    value = workersNeeded,
-                    onValueChange = { workersNeeded = it.filter(Char::isDigit) },
-                    icon = Icons.Default.Group,
-                    keyboardType = KeyboardType.Number,
-                    description = "How many people are needed to do this work?"
-                )
 
-            }
-
-            Button(
-                onClick = {
-                    focusManager.clearFocus()
-                    if (workTitle.isNotBlank() && daysRequired.isNotBlank() &&
-                        acres.isNotBlank() && workersNeeded.isNotBlank()
-                    ) {
-                        workPreview = Work(
-                            farmer = currentUser,
-                            workTitle = workTitle,
-                            daysRequired = daysRequired.toInt(),
-                            acres = acres.toDouble(),
-                            workersNeeded = workersNeeded.toInt()
-                        )
-                        showSheet = true
-                    } else {
-                        scope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = "⚠ Please fill in all fields correctly",
-                                withDismissAction = true
-                            )
-                        }
-                    }
+            // Days Required
+            CustomTextField(
+                label = "Days Required",
+                value = daysRequired,
+                onValueChange = {
+                    daysRequired = it.filter(Char::isDigit)
+                    daysRequiredError = daysRequired.isBlank()
                 },
-                enabled = !isSaving,
-                modifier = Modifier
-                    .height(50.dp)
-                    .width(150.dp)
-                    .align(Alignment.End),
-                shape = RoundedCornerShape(15.dp)
-            ) {
-                if (isSaving) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(18.dp),
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        strokeWidth = 2.dp
+                icon = Icons.Default.CalendarToday,
+                keyboardType = KeyboardType.Number,
+                description = "How many days will this work take to finish?",
+                externalError = daysRequiredError,
+                externalErrorMessage = "Please enter the number of days"
+            )
+
+            // Acres
+            CustomTextField(
+                label = "Acres",
+                value = acres,
+                onValueChange = {
+                    if (it.matches(Regex("^\\d*\\.?\\d*$"))) {
+                        acres = it
+                    }
+                    acresError = acres.isBlank()
+                },
+                icon = Icons.Default.Landscape,
+                keyboardType = KeyboardType.Decimal,
+                description = "Enter the size of the land area in acres.",
+                externalError = acresError,
+                externalErrorMessage = "Please enter a valid acres value"
+            )
+
+            // Workers Needed
+            CustomTextField(
+                label = "Workers Needed",
+                value = workersNeeded,
+                onValueChange = {
+                    workersNeeded = it.filter(Char::isDigit)
+                    workersNeededError = workersNeeded.isBlank()
+                },
+                icon = Icons.Default.Group,
+                keyboardType = KeyboardType.Number,
+                description = "How many people are needed to do this work?",
+                externalError = workersNeededError,
+                externalErrorMessage = "Please enter the number of workers"
+            )
+        }
+
+        Button(
+            onClick = {
+                focusManager.clearFocus()
+                if (workTitle.length > 2 && daysRequired.isNotBlank() &&
+                    acres.isNotBlank() && workersNeeded.isNotBlank()
+                ) {
+                    workPreview = Work(
+                        farmer = currentUser,
+                        workTitle = workTitle,
+                        daysRequired = daysRequired.toInt(),
+                        acres = acres.toDouble(),
+                        workersNeeded = workersNeeded.toInt()
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Saving...")
+                    showSheet = true
                 } else {
-                    Text("Submit")
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = "⚠ Please fill in all fields correctly",
+                            withDismissAction = true
+                        )
+                    }
                 }
+            },
+            enabled = !isSaving,
+            modifier = Modifier
+                .height(50.dp)
+                .width(150.dp)
+                .align(Alignment.End),
+            shape = RoundedCornerShape(15.dp)
+        ) {
+            if (isSaving) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(18.dp),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    strokeWidth = 2.dp
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Saving...")
+            } else {
+                Text("Submit")
             }
         }
     }
+
 
     if (showSheet && workPreview != null) {
         WorkPreviewSheet(
             sheetState = sheetState,
             work = workPreview!!,
             onEdit = { showSheet = false },
-            onConfirm = { /* save logic */ }
+            onConfirm = {
+                isSaving = true
+                scope.launch {
+                    saveWorkToFirestore(
+                        work = workPreview!!,
+                        onSuccess = {
+                            isSaving = false
+                            showSheet = false
+                            scope.launch {
+                                snackbarHostState.showSnackbar("✅ Work posted successfully!")
+                            }
+                        },
+                        onFailure = { error ->
+                            isSaving = false
+                            scope.launch {
+                                snackbarHostState.showSnackbar("❌ Failed to save: ${error.message}")
+                            }
+                        }
+                    )
+                }
+            }
         )
     }
+
 }
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

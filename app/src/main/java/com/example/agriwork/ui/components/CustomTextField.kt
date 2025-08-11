@@ -36,23 +36,26 @@ fun CustomTextField(
     value: String,
     onValueChange: (String) -> Unit,
     icon: ImageVector,
-    showError: Boolean = false,
+    externalError: Boolean = false,
+    externalErrorMessage: String = "",
     description: String = "This is input",
-    keyboardType: KeyboardType = KeyboardType.Text
-    
+    keyboardType: KeyboardType = KeyboardType.Text,
+
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
-    var hasBeenFocused by remember { mutableStateOf(false) }
 
-    LaunchedEffect(isFocused) {
-        if (isFocused) {
-            hasBeenFocused = true
+    // Track if user typed anything at least once
+    var hasTyped by remember { mutableStateOf(false) }
+
+    LaunchedEffect(value) {
+        if (!hasTyped && value.isNotEmpty()) {
+            hasTyped = true
         }
     }
 
-    val showError = hasBeenFocused && value.isBlank()
-
+    // Show error only after the user has typed something
+    val showError = externalError && hasTyped
 
     val infoColor = Color.Black
     val successGreen = Color(0xFF43A047)
@@ -64,6 +67,7 @@ fun CustomTextField(
         else -> Color(0xffd6d3d1)
     }
     val background = when {
+        showError -> Color(0xFFFFF5F5)
         value.isNotBlank() -> Color(0xFFF7FFF5)
         else -> Color(0xfff5f5f4)
     }
@@ -105,7 +109,7 @@ fun CustomTextField(
                 supportingText = {
                     if (showError) {
                         Text(
-                            text = "$label cannot be empty",
+                            text = externalErrorMessage,
                             color = MaterialTheme.colorScheme.error,
                             style = MaterialTheme.typography.bodySmall,
                         )
@@ -131,7 +135,7 @@ fun CustomTextField(
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedContainerColor = background,
                             unfocusedContainerColor = background,
-                            errorContainerColor = Color(0xFFFFF5F5),
+                            errorContainerColor = background,
                             focusedBorderColor = borderColor,
                             unfocusedBorderColor = borderColor,
                             errorBorderColor = borderColor,

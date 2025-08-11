@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -21,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.agriwork.ui.theme.Poppins
@@ -54,12 +56,14 @@ fun WorkShowCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column {
+                Column(modifier = Modifier.weight(1f),) {
                     Text(
                         text = workTitle,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        fontFamily = Poppins
+                        fontFamily = Poppins,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
                     Text(
                         text = "by $farmerName",
@@ -72,6 +76,7 @@ fun WorkShowCard(
                 Surface(
                     color = Color(0xFFf0fdfa),
                     shape = RoundedCornerShape(7.dp),
+                    modifier = Modifier.padding(start = 8.dp)
                 ) {
                     Text(
                         text = "$workersNeeded workers needed",
@@ -123,13 +128,16 @@ fun WorkShowCard(
                         .padding(vertical = 5.dp)
                         .height(50.dp),
                     shape = RoundedCornerShape(10.dp),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+//                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
+
                 ) {
                     Text(
                         text = "View Applicants",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         fontFamily = Poppins,
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -142,19 +150,24 @@ fun WorkShowCard(
 fun DetailRow(label: String, value: String) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = label,
             fontSize = 14.sp,
             fontFamily = Poppins,
-            color = Color(0xFF1c1917)
+            color = Color(0xFF1c1917),
+            modifier = Modifier.weight(1f)
         )
         Text(
             text = value,
             fontSize = 14.sp,
             fontFamily = Poppins,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f),
         )
     }
+
 }

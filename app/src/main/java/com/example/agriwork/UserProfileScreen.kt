@@ -219,12 +219,13 @@ fun LogoutConfirmationDialog(
             }
         },
         dismissButton = {
-            OutlinedButton(
+            Button(
                 onClick = onDismiss,
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = Color.Black,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFE5E5E5), // Light gray background
+                    contentColor = Color.Black
                 ),
-                border = BorderStroke(1.dp, Color.Black),
+//                border = BorderStroke(1.dp, Color.Black),
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -236,7 +237,7 @@ fun LogoutConfirmationDialog(
         },
         containerColor = Color(0xFFF5F5F4),
         tonalElevation = 6.dp,
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(18.dp),
         modifier = Modifier.padding(16.dp)
     )
 }
