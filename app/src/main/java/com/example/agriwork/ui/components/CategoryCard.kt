@@ -33,8 +33,7 @@ fun CategoryCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(150.dp)
-            .padding(vertical = 10.dp)
+            .height(90.dp)
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(12.dp),
     ) {
@@ -52,7 +51,7 @@ fun CategoryCard(
                     .background(
                         Brush.verticalGradient(
                             colors = listOf(Color.Transparent, Color.Black),
-                            startY = 50f
+                            startY = 30f
                         )
                     )
             )
@@ -61,12 +60,12 @@ fun CategoryCard(
                 text = category,
                 fontFamily = Poppins,
                 color = Color.White,
-                fontSize = 18.sp,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 16.dp)
+                    .padding(bottom = 10.dp)
             )
         }
     }

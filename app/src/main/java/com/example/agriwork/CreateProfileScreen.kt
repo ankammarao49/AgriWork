@@ -1,5 +1,8 @@
 package com.example.agriwork
 
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -20,6 +23,7 @@ import com.example.agriwork.data.model.AppUser
 import com.example.agriwork.ui.components.PrimaryButton
 import com.example.agriwork.ui.theme.Poppins
 import com.google.firebase.auth.FirebaseAuth
+import detectLocation
 import kotlinx.coroutines.launch
 
 @Composable
@@ -64,15 +68,12 @@ fun CreateProfileScreen(
                         onNameChange = { name = it },
                         location = location,
                         onLocationChange = { location = it },
-                        onDetectClick = {
-                            isDetecting = true
-                            location = "Detected Village, District"
-                            isDetecting = false
-                        },
                         isDetecting = isDetecting,
+                        onDetectingChange = { isDetecting = it },
                         selectedRole = role,
                         onRoleSelected = { role = it }
                     )
+
                 }
 
                 if (showPreview) {
@@ -100,7 +101,7 @@ fun CreateProfileScreen(
                 role = role,
                 onSubmit = {
                     showPreview = true
-                    onProfileCreated(name, location, role!!)
+                    role?.let { onProfileCreated(name, location, it) }
                 },
                 snackbarHostState = snackbarHostState,
                 modifier = Modifier
@@ -119,11 +120,36 @@ fun ProfileInputSection(
     onNameChange: (String) -> Unit,
     location: String,
     onLocationChange: (String) -> Unit,
-    onDetectClick: () -> Unit,
     isDetecting: Boolean,
+    onDetectingChange: (Boolean) -> Unit,
     selectedRole: String?,
     onRoleSelected: (String) -> Unit
 ) {
+    val context = LocalContext.current
+
+    // Permission launcher
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val granted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+        if (granted) {
+            onDetectingChange(true)
+            detectLocation(
+                context,
+                onLocationDetected = {
+                    onLocationChange(it)
+                    onDetectingChange(false)
+                },
+                onError = {
+                    onLocationChange("")
+                    onDetectingChange(false)
+                }
+            )
+        }
+
+    }
+
     Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
 
         Text(
@@ -149,7 +175,14 @@ fun ProfileInputSection(
 
         DetectLocationButton(
             isDetecting = isDetecting,
-            onClick = onDetectClick
+            onClick = {
+                permissionLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
+                )
+            }
         )
 
         Text(
