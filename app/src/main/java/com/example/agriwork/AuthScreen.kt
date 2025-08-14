@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,6 +24,7 @@ import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
+import com.example.agriwork.R
 
 data class Country(
     val name: String,
@@ -84,14 +86,14 @@ fun AuthScreen(
             )
             {
                 Text(
-                    text = "Let’s get started!",
+                    text = stringResource(R.string.auth_title),
                     fontFamily = Poppins,
                     fontWeight = FontWeight.Black,
                     fontSize = 24.sp
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Enter your mobile number to receive an OTP for verification.",
+                    text = stringResource(R.string.auth_subtitle),
                     fontFamily = Poppins,
                     fontWeight = FontWeight.Light,
                     fontSize = 15.sp,

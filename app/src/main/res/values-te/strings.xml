@@ -4,8 +4,8 @@
     <!-- General -->
     <string name="app_name">అగ్రివర్క్</string>
     <string name="settings_sample_text">భాష మార్పును తనిఖీ చేయడానికి ఇది ఒక నమూనా పాఠ్యం.</string>
-    <string name="welcome_title">అగ్రివర్క్‌కి స్వాగతం</string>
-    <string name="welcome_subtitle">రైతులను ఫీల్డ్ కార్మికులతో కలిపి — గ్రామీణ జీవనోపాధులను అభివృద్ధి చేయడం</string>
+    <string name="welcome_title">అగ్రివర్క్‌ కి స్వాగతం</string>
+    <string name="welcome_subtitle">రైతును మరియు రోజువారి పనులు చేసే వారిని కలపడం – వ్యవసాయాన్ని అభివృద్ధి చేయడం</string>
     <string name="get_started">ప్రారంభించండి</string>
     <string name="home_title">హోమ్</string>
     <string name="drawer_open">డ్రాయర్ తెరవండి</string>

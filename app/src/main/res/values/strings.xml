@@ -48,4 +48,29 @@
     <string name="logout_confirmation_message">Are you sure you want to logout?</string>
     <string name="cancel">Cancel</string>
 
+    <string name="auth_title">Let’s get started!</string>
+    <string name="auth_subtitle">Enter your mobile number to receive an OTP for verification.</string>
+
+    <!-- Labels -->
+    <string name="phone_number_label">Phone Number</string>
+    <string name="otp_label">Enter OTP</string>
+
+    <!-- Buttons -->
+    <string name="send_otp_button">Send OTP</string>
+    <string name="verify_otp_button">Verify OTP</string>
+
+    <!-- Snackbar / Messages -->
+    <string name="login_success">Login successful!</string>
+    <string name="auto_login_success">Auto-login success!</string>
+    <string name="invalid_otp_error">Invalid OTP or error occurred.</string>
+    <string name="enter_valid_otp">Please enter valid 6-digit OTP</string>
+    <string name="enter_valid_phone">Enter valid phone number</string>
+    <string name="verification_failed">Verification failed: %1$s</string> <!-- %1$s for dynamic Firebase error -->
+
+    <!-- Countries (optional if you want them localized) -->
+    <string name="country_india">India</string>
+    <string name="country_us">United States</string>
+    <string name="country_uk">United Kingdom</string>
+    <string name="country_germany">Germany</string>
+    <string name="country_australia">Australia</string>
 </resources>
