@@ -1,41 +1,40 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <!-- General -->
-    <string name="app_name">అగ్రివర్క్</string>
-    <string name="settings_sample_text">భాష మార్పును తనిఖీ చేయడానికి ఇది ఒక నమూనా పాఠ్యం.</string>
-    <string name="welcome_title">అగ్రివర్క్‌ కి స్వాగతం</string>
-    <string name="welcome_subtitle">రైతును మరియు రోజువారి పనులు చేసే వారిని కలపడం – వ్యవసాయాన్ని అభివృద్ధి చేయడం</string>
+    <string name="app_name">AgriWork</string>
+    <string name="settings_sample_text">భాష మార్చడం సరిచూడడానికి ఇది ఒక నమూనా టెక్స్ట్.</string>
+    <string name="welcome_title">AgriWork కి స్వాగతం\n</string>
+    <string name="welcome_subtitle">రైతులను మరియు ఫీల్డ్ కార్మికులను కలిపి — గ్రామీణ జీవనోపాధులను అభివృద్ధి చేయడం</string>
     <string name="get_started">ప్రారంభించండి</string>
     <string name="home_title">హోమ్</string>
     <string name="drawer_open">డ్రాయర్ తెరవండి</string>
-    <string name="error_prefix">పొరపాటు: %1$s</string>
-    <string name="data_load_failed">మీ డేటాను లోడ్ చేయలేకపోయాం. దయచేసి మళ్లీ ప్రయత్నించండి.</string>
+    <string name="error_prefix">లోపం: %1$s</string>
+    <string name="data_load_failed">మీ డేటాను లోడ్ చేయలేము. దయచేసి మళ్లీ ప్రయత్నించండి.</string>
 
     <!-- Greetings -->
-    <string name="greeting_morning">శుభోదయం, %1$s</string>
-    <string name="greeting_afternoon">శుభ మధ్యాహ్నం, %1$s</string>
-    <string name="greeting_evening">శుభ సాయంత్రం, %1$s</string>
-    <string name="greeting_night">శుభ రాత్రి, %1$s</string>
+    <string name="greeting_morning">శుభోదయం,\n%1$s</string>
+    <string name="greeting_afternoon">శుభ మధ్యాహ్నం,\n%1$s</string>
+    <string name="greeting_evening">శుభ సాయంత్రం,\n%1$s</string>
+    <string name="greeting_night">శుభ రాత్రి,\n%1$s</string>
 
     <!-- Farmer Home -->
     <string name="post_a_work">పని పోస్ట్ చేయండి</string>
-    <string name="work_categories_title">పని వర్గాలు</string>
+    <string name="work_categories_title">పనుల విభాగాలు</string>
 
     <!-- Worker Home -->
     <string name="find_a_work">పని కనుగొనండి</string>
 
     <!-- Work Categories -->
-    <string name="category_plowing">లాగడం</string>
-    <string name="category_sowing">విత్తనాలు వేయడం</string>
-    <string name="category_weeding">ముల్లు తీసివేత</string>
-    <string name="category_irrigation">పొలానికి నీరు పెట్టడం</string>
-    <string name="category_harvesting">పంట కోయడం</string>
-    <string name="category_fertilizer">ఎరువు వేయడం</string>
-    <string name="category_fence_repair">కంచె మరమ్మతు</string>
-    <string name="category_planting">మొక్కలు నాటడం</string>
-    <string name="category_digging">తవ్వడం</string>
-    <string name="category_cutting">కటింగ్</string>
+    <string name="category_plowing">అరసల్</string>
+    <string name="category_sowing">విత్తనం</string>
+    <string name="category_weeding">తృణ తొలగించడం</string>
+    <string name="category_irrigation">నీరు పంచడం</string>
+    <string name="category_harvesting">పండించు</string>
+    <string name="category_fertilizer">ఎరువు</string>
+    <string name="category_fence_repair">వేగం మరమ్మత్తు</string>
+    <string name="category_planting">చేపట్టడం</string>
+    <string name="category_digging">వోకడం</string>
+    <string name="category_cutting">కత్తిరించడం</string>
 
     <!-- Generic UI -->
     <string name="loading">లోడ్ అవుతోంది…</string>
@@ -45,9 +44,37 @@
     <!-- User Profile -->
     <string name="profile">ప్రొఫైల్</string>
     <string name="logout">లాగౌట్</string>
-    <string name="confirm_logout">లాగౌట్ ధృవీకరించండి</string>
+    <string name="confirm_logout">లాగౌట్ నిర్ధారించండి</string>
     <string name="logout_confirmation_message">మీరు నిజంగా లాగౌట్ కావాలనుకుంటున్నారా?</string>
     <string name="cancel">రద్దు</string>
 
-</resources>
+    <string name="auth_title">ప్రారంభిద్దాం!</string>
+    <string name="auth_subtitle">సరళీకరణ కోసం OTP పొందడానికి మీ మొబైల్ నంబర్ నమోదు చేయండి.</string>
 
+    <!-- Labels -->
+    <string name="phone_number_label">ఫోన్ నంబర్</string>
+    <string name="otp_label">OTP నమోదు చేయండి</string>
+
+    <!-- Buttons -->
+    <string name="send_otp_button">OTP పంపండి</string>
+    <string name="verify_otp_button">OTP ధృవీకరించండి</string>
+
+    <!-- Snackbar / Messages -->
+    <string name="login_success">లాగిన్ విజయవంతం!</string>
+    <string name="auto_login_success">ఆటో-లాగిన్ విజయవంతం!</string>
+    <string name="invalid_otp_error">చెల్లని OTP లేదా లోపం ఏర్పడింది.</string>
+    <string name="enter_valid_otp">సరైన 6-అంకెల OTPను నమోదు చేయండి</string>
+    <string name="enter_valid_phone">సరైన ఫోన్ నంబర్ నమోదు చేయండి</string>
+    <string name="verification_failed">ధృవీకరణ విఫలమైంది: %1$s</string>
+
+    <!-- Countries (optional if you want them localized) -->
+    <string name="country_india">భారతదేశం</string>
+    <string name="country_us">యునైటెడ్ స్టేట్స్</string>
+    <string name="country_uk">యునైటెడ్ కింగ్‌డమ్</string>
+    <string name="country_germany">జర్మనీ</string>
+    <string name="country_australia">ఆస్ట్రేలియా</string>
+
+    <!-- Custom Farmers Sentence -->
+    <string name="farmers_work">రైతును మరియు రోజువారి పనులు చేసే వారిని కలపడం\nవ్యవసాయాన్ని అభివృద్ధి చేయడం</string>
+
+</resources>
