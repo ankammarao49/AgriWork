@@ -4,22 +4,28 @@ import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.agriwork.data.model.AppUser
+import com.example.agriwork.ui.components.CustomTextField
 import com.example.agriwork.ui.components.PrimaryButton
 import com.example.agriwork.ui.theme.Poppins
 import com.google.firebase.auth.FirebaseAuth
@@ -159,18 +165,30 @@ fun ProfileInputSection(
             fontFamily = Poppins
         )
 
-        OutlinedTextField(
+        Spacer(modifier = Modifier.height(1.dp))
+
+        // Name input
+        CustomTextField(
+            label = "Your Name",
             value = name,
             onValueChange = onNameChange,
-            label = { Text("Your Name") },
-            modifier = Modifier.fillMaxWidth()
+            icon = Icons.Default.Person,
+            keyboardType = KeyboardType.Text,
+            description = "Enter your full name",
+            externalError = name.isBlank(),
+            externalErrorMessage = "Name cannot be empty"
         )
 
-        OutlinedTextField(
+        // Location input
+        CustomTextField(
+            label = "Your Location",
             value = location,
             onValueChange = onLocationChange,
-            label = { Text("Your Location") },
-            modifier = Modifier.fillMaxWidth()
+            icon = Icons.Default.LocationOn,
+            keyboardType = KeyboardType.Text,
+            description = "Enter your city or allow detection",
+            externalError = location.isBlank(),
+            externalErrorMessage = "Location cannot be empty"
         )
 
         DetectLocationButton(
@@ -222,26 +240,50 @@ fun RoleSelectionRow(
     selectedRole: String?,
     onRoleSelected: (String) -> Unit
 ) {
+    val roles = listOf(
+        "farmer" to "Farmer",
+        "worker" to "Worker"
+    )
+
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Box(modifier = Modifier.weight(1f)) {
-            RoleChip(
-                title = "Farmer",
-                isSelected = selectedRole == "farmer",
-                onClick = { onRoleSelected("farmer") }
-            )
-        }
-        Box(modifier = Modifier.weight(1f)) {
-            RoleChip(
-                title = "Worker",
-                isSelected = selectedRole == "worker",
-                onClick = { onRoleSelected("worker") }
-            )
+        roles.forEach { (value, label) ->
+            val isSelected = selectedRole == value
+
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(
+                        if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+                        else MaterialTheme.colorScheme.surface
+                    )
+                    .border(
+                        width = if (isSelected) 2.dp else 1.dp,
+                        color = if (isSelected) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                    .clickable { onRoleSelected(value) }
+                    .padding(vertical = 14.dp, horizontal = 10.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = label,
+                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                    fontSize = 16.sp,
+                    color = if (isSelected) MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.onSurface
+                )
+            }
         }
     }
 }
+
 
 @Composable
 fun RoleChip(title: String, isSelected: Boolean, onClick: () -> Unit) {

@@ -1,3 +1,51 @@
 <resources>
+
+    <!-- General -->
     <string name="app_name">AgriWork</string>
+    <string name="settings_sample_text">This is a sample text to check language change.</string>
+    <string name="welcome_title">Welcome to \nAgriWork</string>
+    <string name="welcome_subtitle">Connecting Farmers with Field Workers — Empowering Rural Livelihoods</string>
+    <string name="get_started">Get Started</string>
+    <string name="home_title">Home</string>
+    <string name="drawer_open">Open Drawer</string>
+    <string name="error_prefix">Error: %1$s</string>
+    <string name="data_load_failed">Could not load your data. Please try again.</string>
+
+    <!-- Greetings -->
+    <string name="greeting_morning">Good Morning, %1$s</string>
+    <string name="greeting_afternoon">Good Afternoon, %1$s</string>
+    <string name="greeting_evening">Good Evening, %1$s</string>
+    <string name="greeting_night">Good Night, %1$s</string>
+
+    <!-- Farmer Home -->
+    <string name="post_a_work">Post a Work</string>
+    <string name="work_categories_title">Work Categories</string>
+
+    <!-- Worker Home -->
+    <string name="find_a_work">Find a Work</string>
+
+    <!-- Work Categories -->
+    <string name="category_plowing">Plowing</string>
+    <string name="category_sowing">Sowing</string>
+    <string name="category_weeding">Weeding</string>
+    <string name="category_irrigation">Irrigation</string>
+    <string name="category_harvesting">Harvesting</string>
+    <string name="category_fertilizer">Fertilizer</string>
+    <string name="category_fence_repair">Fence Repair</string>
+    <string name="category_planting">Planting</string>
+    <string name="category_digging">Digging</string>
+    <string name="category_cutting">Cutting</string>
+
+    <!-- Generic UI -->
+    <string name="loading">Loading…</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <!-- User Profile -->
+    <string name="profile">Profile</string>
+    <string name="logout">Logout</string>
+    <string name="confirm_logout">Confirm Logout</string>
+    <string name="logout_confirmation_message">Are you sure you want to logout?</string>
+    <string name="cancel">Cancel</string>
+
 </resources>

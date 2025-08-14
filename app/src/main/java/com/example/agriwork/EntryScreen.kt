@@ -1,27 +1,21 @@
 package com.example.agriwork
 
-import androidx.compose.foundation.Image
+import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.agriwork.ui.components.PrimaryButton
-import com.example.agriwork.ui.theme.AgriWorkTheme
 import com.example.agriwork.ui.theme.Poppins
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun EntryScreen(onGetStarted: () -> Unit) {
@@ -29,6 +23,9 @@ fun EntryScreen(onGetStarted: () -> Unit) {
     val bgcolor = MaterialTheme.colorScheme.primary
     val textColor = Color.White
 
+    val context = LocalContext.current
+
+    // Set status bar color
     SideEffect {
         systemUiController.setStatusBarColor(
             color = bgcolor,
@@ -48,8 +45,9 @@ fun EntryScreen(onGetStarted: () -> Unit) {
         ) {
             Column {
                 Spacer(modifier = Modifier.height(45.dp))
+
                 Text(
-                    text = "Welcome to \nAgriWork",
+                    text = stringResource(id = R.string.welcome_title),
                     fontFamily = Poppins,
                     fontWeight = FontWeight.Black,
                     fontSize = 28.sp,
@@ -60,7 +58,7 @@ fun EntryScreen(onGetStarted: () -> Unit) {
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = "Connecting Farmers with Field Workers — Empowering Rural Livelihoods",
+                    text = stringResource(id = R.string.welcome_subtitle),
                     fontSize = 13.sp,
                     fontFamily = Poppins,
                     fontWeight = FontWeight.Normal,
@@ -71,22 +69,13 @@ fun EntryScreen(onGetStarted: () -> Unit) {
                 )
             }
 
-//            Image(
-//                painter = painterResource(id = R.drawable.farmer_cuate), // Add your own illustration!
-//                contentDescription = "Welcome Illustration",
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(200.dp),
-//                contentScale = ContentScale.Crop
-//            )
-
             PrimaryButton(
-                onClick = {onGetStarted()},
-                    text = "Get Started",
+                onClick = { onGetStarted() },
+                text = stringResource(id = R.string.get_started),
                 textColor = bgcolor,
                 buttonColor = textColor
             )
         }
     }
-}
 
+}

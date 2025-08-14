@@ -6,56 +6,29 @@ import LogoutConfirmationDialog
 import UserProfileDrawer
 import WorkCategorySection
 import WorkerDashboardScreen
-import android.content.Context
-import android.content.pm.PackageManager
-import android.os.Build
-import android.util.Log
-import android.widget.Toast
-import androidx.annotation.RequiresApi
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.BorderStroke
+import android.app.Activity
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
+import androidx.core.os.LocaleListCompat
 import androidx.navigation.NavHostController
 import com.example.agriwork.data.model.AppUser
 import com.example.agriwork.ui.components.PrimaryButton
-import com.example.agriwork.ui.theme.Poppins
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
-import java.time.LocalTime
-
+import androidx.appcompat.app.AppCompatDelegate
+import com.example.agriwork.ui.language.LanguageSelector
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,20 +44,30 @@ fun HomeScreen(
     val scope = rememberCoroutineScope()
     var showLogoutConfirm by remember { mutableStateOf(false) }
     val categories = listOf(
-        "Plowing", "Sowing", "Weeding", "Irrigation",
-        "Harvesting", "Fertilizer", "Fence Repair", "Planting", "Digging", "Cutting"
+        stringResource(R.string.category_plowing),
+        stringResource(R.string.category_sowing),
+        stringResource(R.string.category_weeding),
+        stringResource(R.string.category_irrigation),
+        stringResource(R.string.category_harvesting),
+        stringResource(R.string.category_fertilizer),
+        stringResource(R.string.category_fence_repair),
+        stringResource(R.string.category_planting),
+        stringResource(R.string.category_digging),
+        stringResource(R.string.category_cutting)
     )
+
     val categoryItems = listOf(
-        "Plowing" to R.drawable.plowing,
-        "Sowing" to R.drawable.sowing,
-        "Weeding" to R.drawable.weeding,
-        "Irrigation" to R.drawable.irrigation,
-        "Harvesting" to R.drawable.harvesting,
-        "Fertilizer" to R.drawable.fertilizers,
-        "Digging" to R.drawable.digging,
-//        "Fence Repair" to R.drawable.fence_repair,
-//        "Planting" to R.drawable.planting,
-//        "Cutting" to R.drawable.cutting
+        stringResource(R.string.category_plowing) to R.drawable.plowing,
+        stringResource(R.string.category_sowing) to R.drawable.sowing,
+        stringResource(R.string.category_weeding) to R.drawable.weeding,
+        stringResource(R.string.category_irrigation) to R.drawable.irrigation,
+        stringResource(R.string.category_harvesting) to R.drawable.harvesting,
+        stringResource(R.string.category_fertilizer) to R.drawable.fertilizers,
+        stringResource(R.string.category_digging) to R.drawable.digging
+        // Uncomment if resources available
+        // stringResource(R.string.category_fence_repair) to R.drawable.fence_repair,
+        // stringResource(R.string.category_planting) to R.drawable.planting,
+        // stringResource(R.string.category_cutting) to R.drawable.cutting
     )
 
 
@@ -131,7 +114,7 @@ fun HomeScreen(
             // Top App Bar as first scrollable item
             item {
                 TopAppBar(
-                    title = { Text("Home", modifier = Modifier.padding(start = 8.dp)) },
+                    title = { Text(stringResource(id = R.string.home_title), modifier = Modifier.padding(start = 8.dp)) },
                     navigationIcon = {
                         IconButton(
                             onClick = {
@@ -143,10 +126,13 @@ fun HomeScreen(
                         ) {
                             Icon(
                                 Icons.Default.Menu,
-                                contentDescription = "Open Drawer",
+                                contentDescription = stringResource(id = R.string.drawer_open),
                                 tint = Color.White,
                                 modifier = Modifier.size(25.dp))
                         }
+                    },
+                    actions = {
+                        LanguageSelector()
                     }
                 )
             }
@@ -170,7 +156,7 @@ fun HomeScreen(
             errorMessage?.let {
                 item {
                     Text(
-                        "Error: $it",
+                        stringResource(id = R.string.error_prefix, it),
                         color = Color.Red,
                         modifier = Modifier.padding(24.dp)
                     )
@@ -199,7 +185,7 @@ fun HomeScreen(
             // Fallback
             if (!isLoading && userData == null && errorMessage == null) {
                 item {
-                    Text("Could not load your data. Please try again.")
+                    Text(stringResource(id = R.string.data_load_failed))
                 }
             }
         }
@@ -212,12 +198,15 @@ fun FarmerHomeContent(currentUser: AppUser, categoryItems: List<Pair<String, Int
         modifier = Modifier.fillMaxSize().padding(vertical = 20.dp),
         verticalArrangement = Arrangement.spacedBy(30.dp)
     ) {
-        PrimaryButton(onClick = { navController.navigate("creatework") }, text = "Post a Work")
+        PrimaryButton(
+            onClick = { navController.navigate("creatework") },
+            text = stringResource(id = R.string.post_a_work)
+        )
 
         HorizontalDivider()
 
         WorkCategorySection(
-            title = "Work Categories",
+            title = stringResource(id = R.string.work_categories_title),
             categoryItems = categoryItems,
             onCategoryClick = { category ->
                 navController.navigate("creatework/$category")
@@ -252,36 +241,4 @@ fun WorkerHomeContent(currentUser: AppUser, navController: NavHostController) {
 
         WorkerDashboardScreen(currentUser, navController)
     }
-}
-
-@Composable
-fun NotificationButton() {
-    val context = LocalContext.current
-    Button(onClick = {
-        sendNotification(context)
-    }) {
-        Text("Send Notification")
-    }
-}
-
-fun sendNotification(context: Context) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        val permissionGranted = ContextCompat.checkSelfPermission(
-            context,
-            android.Manifest.permission.POST_NOTIFICATIONS
-        ) == PackageManager.PERMISSION_GRANTED
-
-        if (!permissionGranted) {
-            return // Don't send the notification if permission not granted
-        }
-    }
-
-    val builder = NotificationCompat.Builder(context, "my_channel_id")
-        .setSmallIcon(android.R.drawable.ic_dialog_info)
-        .setContentTitle("Hello!")
-        .setContentText("This is a test notification")
-        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-
-    val notificationManager = NotificationManagerCompat.from(context)
-    notificationManager.notify(1, builder.build())
 }

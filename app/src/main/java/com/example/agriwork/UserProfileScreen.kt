@@ -39,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -46,17 +47,20 @@ import androidx.compose.ui.unit.sp
 import com.example.agriwork.data.model.AppUser
 import com.example.agriwork.ui.theme.Poppins
 import java.time.LocalTime
+import com.example.agriwork.R
 
 @Composable
 fun GreetingWithName(name: String) {
     val currentHour = remember { LocalTime.now().hour }
 
-    val greeting = when (currentHour) {
-        in 5..11 -> "Good Morning"
-        in 12..16 -> "Good Afternoon"
-        in 17..20 -> "Good Evening"
-        else -> "Good Night"
+    val greetingRes = when (currentHour) {
+        in 5..11 -> R.string.greeting_morning
+        in 12..16 -> R.string.greeting_afternoon
+        in 17..20 -> R.string.greeting_evening
+        else -> R.string.greeting_night
     }
+
+    val greeting = stringResource(id = greetingRes, name)
 
     Column {
         Text(
@@ -66,13 +70,13 @@ fun GreetingWithName(name: String) {
             overflow = TextOverflow.Ellipsis,
             fontSize = 25.sp,
         )
-        Text(
-            text = name,
-            fontFamily = Poppins,
-            fontWeight = FontWeight.Bold,
-            overflow = TextOverflow.Ellipsis,
-            fontSize = 25.sp,
-        )
+//        Text(
+//            text = name,
+//            fontFamily = Poppins,
+//            fontWeight = FontWeight.Bold,
+//            overflow = TextOverflow.Ellipsis,
+//            fontSize = 25.sp,
+//        )
     }
 }
 
@@ -99,10 +103,11 @@ fun UserProfileDrawer(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    "Profile",
+                    stringResource(id = R.string.profile),
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(bottom = 12.dp, start = 5.dp, top = 10.dp)
                 )
+
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(containerColor = Color.White)
@@ -117,7 +122,11 @@ fun UserProfileDrawer(
                                 icon = Icons.Default.AccountBox,
                                 label = it.role.replaceFirstChar { c -> c.uppercase() }
                             )
-                        } ?: Text("Loading...", style = MaterialTheme.typography.bodyMedium)
+                        } ?: Text(
+                            stringResource(id = R.string.loading),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+
                     }
                 }
             }
@@ -136,11 +145,13 @@ fun UserProfileDrawer(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ExitToApp,
-                        contentDescription = "Logout",
+                        contentDescription = stringResource(id = R.string.logout),
                         tint = Color.Red
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Logout")
+
+                    Text(stringResource(id = R.string.logout))
+
                 }
             }
 
@@ -186,7 +197,7 @@ fun LogoutConfirmationDialog(
         },
         title = {
             Text(
-                "Confirm Logout",
+                stringResource(id = R.string.confirm_logout),
                 fontFamily = Poppins,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 20.sp,
@@ -195,7 +206,7 @@ fun LogoutConfirmationDialog(
         },
         text = {
             Text(
-                "Are you sure you want to logout?",
+                stringResource(id = R.string.logout_confirmation_message),
                 fontFamily = Poppins,
                 fontWeight = FontWeight.Normal,
                 fontSize = 14.sp,
@@ -215,7 +226,7 @@ fun LogoutConfirmationDialog(
                     .padding(horizontal = 8.dp)
                     .height(44.dp)
             ) {
-                Text("Logout", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Text(stringResource(id = R.string.logout), fontWeight = FontWeight.Bold, fontSize = 16.sp)
             }
         },
         dismissButton = {
@@ -232,7 +243,12 @@ fun LogoutConfirmationDialog(
                     .padding(horizontal = 8.dp)
                     .height(44.dp)
             ) {
-                Text("Cancel", fontWeight = FontWeight.Medium, fontSize = 16.sp)
+                Text(
+                    stringResource(id = R.string.cancel),
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 16.sp
+                )
+
             }
         },
         containerColor = Color(0xFFF5F5F4),

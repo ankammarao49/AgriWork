@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- General -->
+    <string name="app_name">అగ్రివర్క్</string>
+    <string name="settings_sample_text">భాష మార్పును తనిఖీ చేయడానికి ఇది ఒక నమూనా పాఠ్యం.</string>
+    <string name="welcome_title">అగ్రివర్క్‌కి స్వాగతం</string>
+    <string name="welcome_subtitle">రైతులను ఫీల్డ్ కార్మికులతో కలిపి — గ్రామీణ జీవనోపాధులను అభివృద్ధి చేయడం</string>
+    <string name="get_started">ప్రారంభించండి</string>
+    <string name="home_title">హోమ్</string>
+    <string name="drawer_open">డ్రాయర్ తెరవండి</string>
+    <string name="error_prefix">పొరపాటు: %1$s</string>
+    <string name="data_load_failed">మీ డేటాను లోడ్ చేయలేకపోయాం. దయచేసి మళ్లీ ప్రయత్నించండి.</string>
+
+    <!-- Greetings -->
+    <string name="greeting_morning">శుభోదయం, %1$s</string>
+    <string name="greeting_afternoon">శుభ మధ్యాహ్నం, %1$s</string>
+    <string name="greeting_evening">శుభ సాయంత్రం, %1$s</string>
+    <string name="greeting_night">శుభ రాత్రి, %1$s</string>
+
+    <!-- Farmer Home -->
+    <string name="post_a_work">పని పోస్ట్ చేయండి</string>
+    <string name="work_categories_title">పని వర్గాలు</string>
+
+    <!-- Worker Home -->
+    <string name="find_a_work">పని కనుగొనండి</string>
+
+    <!-- Work Categories -->
+    <string name="category_plowing">లాగడం</string>
+    <string name="category_sowing">విత్తనాలు వేయడం</string>
+    <string name="category_weeding">ముల్లు తీసివేత</string>
+    <string name="category_irrigation">పొలానికి నీరు పెట్టడం</string>
+    <string name="category_harvesting">పంట కోయడం</string>
+    <string name="category_fertilizer">ఎరువు వేయడం</string>
+    <string name="category_fence_repair">కంచె మరమ్మతు</string>
+    <string name="category_planting">మొక్కలు నాటడం</string>
+    <string name="category_digging">తవ్వడం</string>
+    <string name="category_cutting">కటింగ్</string>
+
+    <!-- Generic UI -->
+    <string name="loading">లోడ్ అవుతోంది…</string>
+    <string name="yes">అవును</string>
+    <string name="no">కాదు</string>
+
+    <!-- User Profile -->
+    <string name="profile">ప్రొఫైల్</string>
+    <string name="logout">లాగౌట్</string>
+    <string name="confirm_logout">లాగౌట్ ధృవీకరించండి</string>
+    <string name="logout_confirmation_message">మీరు నిజంగా లాగౌట్ కావాలనుకుంటున్నారా?</string>
+    <string name="cancel">రద్దు</string>
+
+</resources>
+

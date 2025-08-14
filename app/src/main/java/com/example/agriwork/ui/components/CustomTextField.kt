@@ -40,7 +40,7 @@ fun CustomTextField(
     externalErrorMessage: String = "",
     description: String = "This is input",
     keyboardType: KeyboardType = KeyboardType.Text,
-
+    modifier: Modifier = Modifier
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
@@ -77,7 +77,7 @@ fun CustomTextField(
         onValueChange = onValueChange,
         singleLine = true,
         interactionSource = interactionSource,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = keyboardType),
         decorationBox = { innerTextField ->
             OutlinedTextFieldDefaults.DecorationBox(

@@ -46,12 +46,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.agriwork.data.model.AppUser
 import com.example.agriwork.data.model.Work
+import com.example.agriwork.data.utils.sendNotification
 import com.example.agriwork.ui.theme.Poppins
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldValue
@@ -59,6 +61,7 @@ import com.google.firebase.firestore.firestore
 
 @Composable
 fun ApplicantsScreen(workId: String, navController: NavHostController) {
+    val context = LocalContext.current
     val db = Firebase.firestore
     var currentUser by remember { mutableStateOf<AppUser?>(null) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
@@ -67,6 +70,7 @@ fun ApplicantsScreen(workId: String, navController: NavHostController) {
     var selectedApplicants by remember { mutableStateOf<List<String>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     var selectedTab by remember { mutableStateOf("Applied") }
+
 
     LaunchedEffect(Unit) {
         getUserFromFirestore(
@@ -223,6 +227,13 @@ fun ApplicantsScreen(workId: String, navController: NavHostController) {
                                 },
                                 onError = { /* Handle error */ }
                             )
+                            sendNotification(
+                                context = context,
+                                title = "Application Approved",
+                                message = "You have been selected for ${work?.workTitle}",
+                                userId = user.uid
+                            )
+
                         }
                     )
                 }
