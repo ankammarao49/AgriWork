@@ -30,11 +30,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.agriwork.ui.components.CategoryCard
 import com.example.agriwork.ui.theme.Poppins
+import com.example.agriwork.R
 
 @Composable
 fun WorkCategorySection(
@@ -87,7 +89,7 @@ fun WorkCategorySection(
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
-                text = if (showAll) "Show Less" else "Show More",
+                text = if (showAll) stringResource(R.string.show_less) else stringResource(R.string.show_more),
                 fontSize = 13.sp,
                 style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
             )

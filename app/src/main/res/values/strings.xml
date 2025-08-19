@@ -4,119 +4,185 @@
     <string name="app_name">AgriWork</string>
 
     <!-- ========== General / Common ========== -->
-    <string name="settings_sample_text">This is a sample text to check language change.</string>
-    <string name="error_prefix">Error: %1$s</string>
-    <string name="data_load_failed">Could not load your data. Please try again.</string>
-    <string name="loading">Loading…</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
-    <string name="cancel">Cancel</string>
     <string name="back">Back</string>
+    <string name="cancel">Cancel</string>
+    <string name="data_load_failed">Could not load your data. Please try again.</string>
+    <string name="error_prefix">Error: %1$s</string>
+    <string name="loading">Loading…</string>
+    <string name="no">No</string>
+    <string name="settings_sample_text">This is a sample text to check language change.</string>
+    <string name="yes">Yes</string>
 
     <!-- ========== Welcome / Onboarding ========== -->
-    <string name="welcome_title">Welcome to \nAgriWork</string>
-    <string name="welcome_subtitle">Connecting Farmers with Field Workers — Empowering Rural Livelihoods</string>
     <string name="get_started">Get Started</string>
+    <string name="welcome_subtitle">Connecting Farmers with Field Workers — Empowering Rural Livelihoods</string>
+    <string name="welcome_title">Welcome to \nAgriWork</string>
 
     <!-- ========== Greetings ========== -->
-    <string name="greeting_morning">Good Morning</string>
     <string name="greeting_afternoon">Good Afternoon</string>
     <string name="greeting_evening">Good Evening</string>
-    <string name="greeting_night">Good Night</string>
     <string name="greeting_generic">Hello</string>
-
-    <string name="subtitle_morning">Let’s make today productive!</string>
+    <string name="greeting_morning">Good Morning</string>
+    <string name="greeting_night">Good Night</string>
     <string name="subtitle_afternoon">Hope your day is going great!</string>
     <string name="subtitle_evening">Winding down for the day?</string>
     <string name="subtitle_generic">Still up late? Take it easy!</string>
+    <string name="subtitle_morning">Let’s make today productive!</string>
 
     <!-- ========== Home Screens ========== -->
-    <string name="home_title">Home</string>
     <string name="drawer_open">Open Drawer</string>
-
-    <!-- Farmer Home -->
+    <string name="find_a_work">Find a Work</string>
+    <string name="home_title">Home</string>
     <string name="post_a_work">Post a Work</string>
     <string name="work_categories_title">Work Categories</string>
 
-    <!-- Worker Home -->
-    <string name="find_a_work">Find a Work</string>
-
     <!-- ========== Work Categories ========== -->
+    <string name="category_cutting">Cutting</string>
+    <string name="category_digging">Digging</string>
+    <string name="category_fence_repair">Fence Repair</string>
+    <string name="category_fertilizer">Fertilizer</string>
+    <string name="category_harvesting">Harvesting</string>
+    <string name="category_irrigation">Irrigation</string>
+    <string name="category_planting">Planting</string>
     <string name="category_plowing">Plowing</string>
     <string name="category_sowing">Sowing</string>
     <string name="category_weeding">Weeding</string>
-    <string name="category_irrigation">Irrigation</string>
-    <string name="category_harvesting">Harvesting</string>
-    <string name="category_fertilizer">Fertilizer</string>
-    <string name="category_fence_repair">Fence Repair</string>
-    <string name="category_planting">Planting</string>
-    <string name="category_digging">Digging</string>
-    <string name="category_cutting">Cutting</string>
-
-    <!-- ========== User Profile ========== -->
-    <string name="profile">Profile</string>
-    <string name="logout">Logout</string>
-    <string name="confirm_logout">Confirm Logout</string>
-    <string name="logout_confirmation_message">Are you sure you want to logout?</string>
-
-    <!-- ========== Authentication ========== -->
-    <string name="auth_title">Let’s get started!</string>
-    <string name="auth_subtitle">Enter your mobile number to receive an OTP for verification.</string>
-    <string name="role_farmer">Farmer</string>
-    <string name="role_worker">Worker</string>
-
-    <!-- Labels -->
-    <string name="phone_number_label">Phone Number</string>
-    <string name="otp_label">Enter OTP</string>
-
-    <!-- Buttons -->
-    <string name="send_otp_button">Send OTP</string>
-    <string name="verify_otp_button">Verify OTP</string>
-
-    <!-- Snackbar / Messages -->
-    <string name="login_success">Login successful!</string>
-    <string name="auto_login_success">Auto-login success!</string>
-    <string name="invalid_otp_error">Invalid OTP or error occurred.</string>
-    <string name="enter_valid_otp">Please enter valid 6-digit OTP</string>
-    <string name="otp_sent">OTP sent to %1$s</string>
-    <string name="enter_valid_phone">Enter valid phone number</string>
-    <string name="verification_failed">Verification failed: %1$s</string>
-
-    <!-- ========== Countries ========== -->
-    <string name="country_india">India</string>
-    <string name="country_us">United States</string>
-    <string name="country_uk">United Kingdom</string>
-    <string name="country_germany">Germany</string>
-    <string name="country_australia">Australia</string>
 
     <!-- ========== Work Details / Cards ========== -->
-    <string name="by_farmer">by %1$s</string>
-    <string name="workers_needed">%1$d workers needed</string>
-    <string name="location">Location</string>
-    <string name="time_required">Time Required</string>
-    <string name="days">%1$d day</string>
-    <string name="days_plural">%1$d days</string>
-    <string name="land_area">Land Area</string>
     <string name="acres">%1$.1f acres</string>
     <string name="apply">Apply</string>
+    <string name="by_farmer">by %1$s</string>
+    <string name="days">%1$d day</string>
+    <string name="days_plural">%1$d days</string>
+    <string name="days_required">Days Required</string>
+    <string name="days_required_description">How many days will this work take to finish?</string>
+    <string name="days_required_error">Please enter the number of days</string>
+    <string name="land_area">Land Area</string>
+    <string name="location">Location</string>
+    <string name="time_required">Time Required</string>
     <string name="view_applicants">View Applicants</string>
+    <string name="workers_needed">%1$d workers needed</string>
+    <string name="workers_needed_description">How many people are needed to do this work?</string>
+    <string name="workers_needed_error">Please enter the number of workers</string>
+    <string name="work_and_farmer_details">Work &amp; Farmer Details</string>
+    <string name="work_title">Work Title</string>
 
     <!-- ========== Applicants Section ========== -->
     <string name="applicants">Applicants</string>
     <string name="applied">Applied</string>
-    <string name="selected">Selected</string>
+    <string name="application_approved">Application Approved</string>
+    <string name="approve">Approve</string>
+    <string name="farmer_name">Farmer Name</string>
+    <string name="mobile">Mobile</string>
+    <string name="name">Name</string>
     <string name="needed">Needed</string>
     <string name="no_applicants">No %1$s applicants.</string>
-    <string name="work_and_farmer_details">Work &amp; Farmer Details</string>
-    <string name="work_title">Work Title</string>
-    <string name="days_required">Days Required</string>
-    <string name="farmer_name">Farmer Name</string>
     <string name="phone">Phone</string>
-    <string name="name">Name</string>
-    <string name="mobile">Mobile</string>
-    <string name="approve">Approve</string>
+    <string name="selected">Selected</string>
     <string name="selected_status">Selected</string>
-    <string name="application_approved">Application Approved</string>
     <string name="you_have_been_selected">You have been selected for %1$s</string>
 
+    <!-- ========== Authentication ========== -->
+    <string name="auth_subtitle">Enter your mobile number to receive an OTP for verification.</string>
+    <string name="auth_title">Let’s get started!</string>
+    <string name="enter_valid_otp">Please enter valid 6-digit OTP</string>
+    <string name="enter_valid_phone">Enter valid phone number</string>
+    <string name="invalid_otp_error">Invalid OTP or error occurred.</string>
+    <string name="login_success">Login successful!</string>
+    <string name="auto_login_success">Auto-login success!</string>
+    <string name="otp_label">Enter OTP</string>
+    <string name="otp_sent">OTP sent to %1$s</string>
+    <string name="phone_number_label">Phone Number</string>
+    <string name="role_farmer">Farmer</string>
+    <string name="role_worker">Worker</string>
+    <string name="send_otp_button">Send OTP</string>
+    <string name="verification_failed">Verification failed: %1$s</string>
+    <string name="verify_otp_button">Verify OTP</string>
+
+    <!-- ========== User Profile ========== -->
+    <string name="confirm_logout">Confirm Logout</string>
+    <string name="logout">Logout</string>
+    <string name="logout_confirmation_message">Are you sure you want to logout?</string>
+    <string name="profile">Profile</string>
+
+    <!-- ========== Profile Creation Screen ========== -->
+    <string name="btn_continue">Continue</string>
+    <string name="choose_role">Choose your role</string>
+    <string name="complete_your_profile">Complete your profile</string>
+    <string name="detect_location">Detect Location</string>
+    <string name="detecting">Detecting...</string>
+    <string name="enter_full_name">Enter your full name</string>
+    <string name="enter_location">Enter your city or allow detection</string>
+    <string name="error_location_empty">Location cannot be empty</string>
+    <string name="error_name_empty">Name cannot be empty</string>
+    <string name="location_icon_desc">Location Icon</string>
+    <string name="preview_location">📍 Location: %1$s</string>
+    <string name="preview_name">👤 Name: %1$s</string>
+    <string name="preview_role">🧑‍🌾 Role: %1$s</string>
+    <string name="profile_info">✅ Profile Info:</string>
+    <string name="snackbar_enter_location">Please enter your location</string>
+    <string name="snackbar_enter_name">Please enter your name</string>
+    <string name="snackbar_error">Something went wrong. Please try again.</string>
+    <string name="snackbar_select_role">Please select your role</string>
+    <string name="your_location">Your Location</string>
+    <string name="your_name">Your Name</string>
+
+    <!-- ========== Countries ========== -->
+    <string name="country_australia">Australia</string>
+    <string name="country_germany">Germany</string>
+    <string name="country_india">India</string>
+    <string name="country_uk">United Kingdom</string>
+    <string name="country_us">United States</string>
+
+    <!-- ========== UI Controls ========== -->
+    <string name="show_less">Show Less</string>
+    <string name="show_more">Show More</string>
+    <string name="voice_input">Voice Input</string>
+    <string name="voice_input_listening">Listening...</string>
+    <string name="expand">Expand</string>
+    <string name="collapse">Collapse</string>
+
+    <!-- ========== Misc ========== -->
+    <string name="default_input_description">This is input</string>
+    <string name="acres_description">Enter the size of the land area in acres.</string>
+    <string name="acres_error">Please enter a valid acres value</string>
+    <string name="saving">Saving...</string>
+    <string name="submit">Submit</string>
+    <string name="review">Review</string>
+    <string name="acres_unit">acres</string>
+    <string name="edit">Edit</string>
+    <string name="confirm">Confirm</string>
+
+    <string name="post_work">Post a Work</string>
+    <string name="work_title_description">What is the name of the work?\n</string>
+    <string name="days_required">Days Required</string>
+    <string name="days_required_description">Number of days required for this work</string>
+    <string name="acres">Acres</string>
+    <string name="acres_description">Area in acres for the work</string>
+    <string name="workers_needed">Workers Needed</string>
+    <string name="workers_needed_description">Number of workers required</string>
+
+    <!-- Errors -->
+    <string name="title_empty">Title cannot be empty</string>
+    <string name="title_short">Title must have at least 3 characters</string>
+    <string name="days_required_error">Please enter number of days</string>
+    <string name="acres_error">Please enter valid area</string>
+    <string name="workers_needed_error">Please enter number of workers</string>
+    <string name="form_incomplete">Please fill all fields correctly</string>
+    <string name="error_prefix">Error: %1$s</string>
+
+    <!-- Buttons -->
+    <string name="submit">Submit</string>
+    <string name="saving">Saving...</string>
+    <string name="edit">Edit</string>
+    <string name="confirm">Confirm</string>
+
+    <!-- Review Sheet -->
+    <string name="review">Review</string>
+    <string name="days">days</string>
+    <string name="acres_unit">acres</string>
+
+    <!-- Snackbar / Success / Failure -->
+    <string name="work_posted_success">Work posted successfully</string>
+    <string name="work_posted_failure">Failed to post work: %1$s</string>
 </resources>

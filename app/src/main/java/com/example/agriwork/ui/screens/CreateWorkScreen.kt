@@ -69,8 +69,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
+import com.example.agriwork.R
 import com.example.agriwork.data.model.AppUser
 import com.example.agriwork.data.model.Work
 import com.example.agriwork.data.repository.WorkRepository.saveWorkToFirestore
@@ -85,9 +87,19 @@ import kotlinx.coroutines.launch
 @Composable
 fun CreateWorkScreen(navController: NavController, category: String = "") {
     val categories = listOf(
-        "Plowing", "Sowing", "Weeding", "Irrigation",
-        "Harvesting", "Fertilizer", "Fence Repair", "Planting", "Digging", "Cutting"
+        stringResource(R.string.category_plowing),
+        stringResource(R.string.category_sowing),
+        stringResource(R.string.category_weeding),
+        stringResource(R.string.category_irrigation),
+        stringResource(R.string.category_harvesting),
+        stringResource(R.string.category_fertilizer),
+        stringResource(R.string.category_fence_repair),
+        stringResource(R.string.category_planting),
+        stringResource(R.string.category_digging),
+        stringResource(R.string.category_cutting)
+
     )
+
     var currentUser by remember { mutableStateOf<AppUser?>(null) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     val context = LocalContext.current
@@ -109,7 +121,7 @@ fun CreateWorkScreen(navController: NavController, category: String = "") {
         KeyboardDismissWrapper {
             when {
                 errorMessage != null -> Text(
-                    "⚠️ Error: $errorMessage",
+                    text = stringResource(R.string.error_prefix, errorMessage ?: ""),
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.padding(innerPadding)
                 )
@@ -199,7 +211,7 @@ fun WorkForm(
     )
     {
         Text(
-            text = "Post a Work",
+            text = stringResource(R.string.post_work),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
@@ -224,19 +236,19 @@ fun WorkForm(
 //                    }
 //                )
             WorkTitleInput(
-                label = "Work Title",
+                label = stringResource(R.string.work_title),
                 value = workTitle,
                 onValueChange = {
                     workTitle = it
                     workTitleError = it.isBlank() || it.length < 3
                 },
                 icon = Icons.Default.Work,
-                description = "What is the name of the work?",
+                description = stringResource(R.string.work_title_description),
                 suggestions = categories, // <-- List<String> with your autocomplete items
                 isError = workTitleError,
                 errorMessage = when {
-                    workTitle.isBlank() -> "Title cannot be empty"
-                    workTitle.length < 3 -> "Title must have at least 3 characters"
+                    workTitle.isBlank() -> stringResource(R.string.title_empty)
+                    workTitle.length < 3 -> stringResource(R.string.title_short)
                     else -> ""
                 }
             )
@@ -244,7 +256,7 @@ fun WorkForm(
 
             // Days Required
             CustomTextField(
-                label = "Days Required",
+                label = stringResource(R.string.days_required),
                 value = daysRequired,
                 onValueChange = {
                     daysRequired = it.filter(Char::isDigit)
@@ -252,14 +264,14 @@ fun WorkForm(
                 },
                 icon = Icons.Default.CalendarToday,
                 keyboardType = KeyboardType.Number,
-                description = "How many days will this work take to finish?",
+                description = stringResource(R.string.days_required_description),
                 externalError = daysRequiredError,
-                externalErrorMessage = "Please enter the number of days"
+                externalErrorMessage = stringResource(R.string.days_required_error)
             )
 
             // Acres
             CustomTextField(
-                label = "Acres",
+                label = stringResource(R.string.acres),
                 value = acres,
                 onValueChange = {
                     if (it.matches(Regex("^\\d*\\.?\\d*$"))) {
@@ -269,14 +281,14 @@ fun WorkForm(
                 },
                 icon = Icons.Default.Landscape,
                 keyboardType = KeyboardType.Decimal,
-                description = "Enter the size of the land area in acres.",
+                description = stringResource(R.string.acres_description),
                 externalError = acresError,
-                externalErrorMessage = "Please enter a valid acres value"
+                externalErrorMessage = stringResource(R.string.acres_error)
             )
 
             // Workers Needed
             CustomTextField(
-                label = "Workers Needed",
+                label = stringResource(R.string.workers_needed),
                 value = workersNeeded,
                 onValueChange = {
                     workersNeeded = it.filter(Char::isDigit)
@@ -284,9 +296,9 @@ fun WorkForm(
                 },
                 icon = Icons.Default.Group,
                 keyboardType = KeyboardType.Number,
-                description = "How many people are needed to do this work?",
+                description = stringResource(R.string.workers_needed_description),
                 externalError = workersNeededError,
-                externalErrorMessage = "Please enter the number of workers"
+                externalErrorMessage = stringResource(R.string.workers_needed_error)
             )
         }
 
@@ -307,7 +319,7 @@ fun WorkForm(
                 } else {
                     scope.launch {
                         snackbarHostState.showSnackbar(
-                            message = "⚠ Please fill in all fields correctly",
+                            message = stringResource(R.string.form_incomplete),
                             withDismissAction = true
                         )
                     }
@@ -327,9 +339,9 @@ fun WorkForm(
                     strokeWidth = 2.dp
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Saving...")
+                Text(stringResource(R.string.saving))
             } else {
-                Text("Submit")
+                Text(stringResource(R.string.submit))
             }
         }
     }
@@ -349,13 +361,13 @@ fun WorkForm(
                             isSaving = false
                             showSheet = false
                             scope.launch {
-                                snackbarHostState.showSnackbar("✅ Work posted successfully!")
+                                snackbarHostState.showSnackbar( message = context.getString(R.string.work_posted_success),
                             }
                         },
                         onFailure = { error ->
                             isSaving = false
                             scope.launch {
-                                snackbarHostState.showSnackbar("❌ Failed to save: ${error.message}")
+                                snackbarHostState.showSnackbar(message = context.getString(R.string.work_posted_failure), error.message ?: "")
                             }
                         }
                     )
@@ -398,7 +410,7 @@ fun WorkPreviewSheet(
             ) {
                 // Title
                 Text(
-                    text = "Review",
+                    text = stringResource(R.string.review),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
@@ -415,10 +427,12 @@ fun WorkPreviewSheet(
                         modifier = Modifier.padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        PreviewRow(Icons.Default.Work, "Work Title", work.workTitle)
-                        PreviewRow(Icons.Default.CalendarToday, "Days Required", "${work.daysRequired} days")
-                        PreviewRow(Icons.Default.Landscape, "Acres", "${work.acres} acres")
-                        PreviewRow(Icons.Default.Group, "Workers Needed", "${work.workersNeeded}")
+
+                        PreviewRow(Icons.Default.Work, stringResource(R.string.work_title), work.workTitle)
+                        PreviewRow(Icons.Default.CalendarToday, stringResource(R.string.days_required), "${work.daysRequired} ${stringResource(R.string.days)}")
+                        PreviewRow(Icons.Default.Landscape, stringResource(R.string.acres), "${work.acres} ${stringResource(R.string.acres_unit)}")
+                        PreviewRow(Icons.Default.Group, stringResource(R.string.workers_needed), "${work.workersNeeded}")
+
                     }
                 }
 
@@ -432,7 +446,7 @@ fun WorkPreviewSheet(
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Text("Edit")
+                        Text(stringResource(R.string.edit))
                     }
 
                     Button(
@@ -451,7 +465,7 @@ fun WorkPreviewSheet(
                                 color = MaterialTheme.colorScheme.onPrimary
                             )
                         } else {
-                            Text("Confirm")
+                            Text(stringResource(R.string.confirm))
                         }
                     }
                 }

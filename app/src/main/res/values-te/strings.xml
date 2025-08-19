@@ -22,7 +22,7 @@
     <string name="greeting_afternoon">శుభ మద్యాహ్నం</string>
     <string name="greeting_evening">శుభ సాయంత్రం</string>
     <string name="greeting_night">శుభ రాత్రి</string>
-    <string name="greeting_generic">హలో</string>
+    <string name="greeting_generic">నమస్కారం</string>
 
     <string name="subtitle_morning">ఈ రోజు ఫలప్రదంగా చేద్దాం!</string>
     <string name="subtitle_afternoon">మీ రోజు బాగానే సాగుతుందని ఆశిస్తున్నాము!</string>
@@ -34,16 +34,16 @@
     <string name="drawer_open">డ్రాయర్ తెరవండి</string>
 
     <!-- Farmer Home -->
-    <string name="post_a_work">పని పోస్ట్ చేయండి</string>
+    <string name="post_a_work">పని ఇవ్వండి</string>
     <string name="work_categories_title">పని విభాగాలు</string>
 
     <!-- Worker Home -->
     <string name="find_a_work">పని కనుగొనండి</string>
 
     <!-- Work Categories -->
-    <string name="category_plowing">ఉజ్జాయింపు</string>
+    <string name="category_plowing">పొలం దున్నడం</string>
     <string name="category_sowing">విత్తనాలు వేయడం</string>
-    <string name="category_weeding">మడుగులు తీయడం</string>
+    <string name="category_weeding">కలుపు తీయడం</string>
     <string name="category_irrigation">పొలానికి నీరు పెట్టడం</string>
     <string name="category_harvesting">పంట కోయడం</string>
     <string name="category_fertilizer">ఎరువులు వేయడం</string>
@@ -107,8 +107,8 @@
     <string name="needed">అవసరం</string>
     <string name="no_applicants">%1$s దరఖాస్తుదారులు లేరు.</string>
     <string name="work_and_farmer_details">పని &amp; రైతు వివరాలు</string>
-    <string name="work_title">పని శీర్షిక</string>
-    <string name="days_required">అవసరమైన రోజులు</string>
+    <string name="work_title">పని పేరు</string>
+    <string name="days_required">కావలసిన రోజులు</string>
     <string name="farmer_name">రైతు పేరు</string>
     <string name="phone">ఫోన్</string>
     <string name="name">పేరు</string>
@@ -117,4 +117,54 @@
     <string name="selected_status">ఎంచుకోబడ్డారు</string>
     <string name="application_approved">దరఖాస్తు ఆమోదించబడింది</string>
     <string name="you_have_been_selected">మీరు %1$s కోసం ఎంపిక చేయబడ్డారు</string>
+
+    <!-- Profile Creation Screen -->
+    <string name="btn_continue">కొనసాగించండి</string>
+    <string name="choose_role">మీ పాత్రను ఎంచుకోండి</string>
+    <string name="complete_your_profile">మీ ప్రొఫైల్ పూర్తి చేయండి</string>
+    <string name="detect_location">ప్రాంతాన్ని గుర్తించండి</string>
+    <string name="detecting">గుర్తిస్తున్నాం...</string>
+    <string name="enter_full_name">మీ పూర్తి పేరు నమోదు చేయండి</string>
+    <string name="enter_location">మీ నగరం నమోదు చేయండి లేదా గుర్తింపు అనుమతించండి</string>
+    <string name="error_location_empty">ప్రాంతం ఖాళీగా ఉండకూడదు</string>
+    <string name="error_name_empty">పేరు ఖాళీగా ఉండకూడదు</string>
+    <string name="location_icon_desc">ప్రాంతం ఐకాన్</string>
+    <string name="preview_location">📍 ప్రాంతం: %1$s</string>
+    <string name="preview_name">👤 పేరు: %1$s</string>
+    <string name="preview_role">🧑‍🌾 పాత్ర: %1$s</string>
+    <string name="profile_info">✅ ప్రొఫైల్ వివరాలు:</string>
+    <string name="snackbar_enter_location">దయచేసి మీ ప్రాంతం నమోదు చేయండి</string>
+    <string name="snackbar_enter_name">దయచేసి మీ పేరు నమోదు చేయండి</string>
+    <string name="snackbar_error">ఏదో తప్పు జరిగింది. దయచేసి మళ్లీ ప్రయత్నించండి.</string>
+    <string name="snackbar_select_role">దయచేసి మీ పాత్రను ఎంచుకోండి</string>
+    <string name="your_location">మీ ప్రాంతం</string>
+    <string name="your_name">మీ పేరు</string>
+    <string name="show_less">తక్కువ చూపించు</string>
+    <string name="show_more">మరింత చూపించు</string>
+
+    <!-- Voice input -->
+    <string name="voice_input">వాయిస్ ఇన్‌పుట్</string>
+    <string name="voice_input_listening">వినుతోంది...</string>
+
+    <!-- Dropdown -->
+    <string name="expand">విస్తరించు</string>
+    <string name="collapse">సంకోచించు</string>
+
+    <!-- Description -->
+    <string name="default_input_description">ఇది ఇన్‌పుట్</string>
+    <string name="days_required_description">ఈ పనిని పూర్తిచేయడానికి ఎన్ని రోజులు పడతాయి?</string>
+    <string name="days_required_error">దయచేసి రోజుల సంఖ్యను నమోదు చేయండి</string>
+    <string name="acres_description">భూమి విస్తీర్ణాన్ని ఎకరాల్లో నమోదు చేయండి.</string>
+    <string name="acres_error">దయచేసి సరైన ఎకరాల విలువను నమోదు చేయండి</string>
+    <string name="workers_needed_description">ఈ పని చేయడానికి ఎన్ని మంది అవసరం?</string>
+    <string name="workers_needed_error">దయచేసి కూలీల సంఖ్యను నమోదు చేయండి</string>
+
+    <!-- Actions -->
+    <string name="saving">సేవ్ అవుతోంది...</string>
+    <string name="submit">సమర్పించండి</string>
+    <string name="review">సమీక్ష</string>
+    <string name="acres_unit">ఎకరాలు</string>
+    <string name="edit">మార్చండి</string>
+    <string name="confirm">నిర్ధారించండి</string>
+
 </resources>

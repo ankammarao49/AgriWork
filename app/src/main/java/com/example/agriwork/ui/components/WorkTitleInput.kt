@@ -59,6 +59,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -68,6 +69,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import com.example.agriwork.data.utils.VoiceInputHelper
+import com.example.agriwork.R
+
 
 fun Context.findActivity(): Activity? = when (this) {
     is Activity -> this
@@ -201,7 +204,7 @@ fun WorkTitleInput(
                                 IconButton(onClick = { voiceHelper.startListening() }, modifier = Modifier.scale(pulseScale)) {
                                     Icon(
                                         imageVector = Icons.Filled.Mic,
-                                        contentDescription = "Voice Input",
+                                        contentDescription = stringResource(R.string.voice_input),
                                         tint = if (voiceHelper.isListening.value) Color.Blue else Color.Black
                                     )
                                 }
@@ -209,7 +212,9 @@ fun WorkTitleInput(
                                     Icon(
                                         modifier = Modifier.size(24.dp),
                                         imageVector = if (expanded) Icons.Rounded.KeyboardArrowUp else Icons.Rounded.KeyboardArrowDown,
-                                        contentDescription = if (expanded) "Collapse" else "Expand",
+                                        contentDescription = if (expanded) "Collapse"
+                                        else
+                                            stringResource(R.string.expand),
                                         tint = Color.Black
                                     )
                                 }
@@ -220,7 +225,7 @@ fun WorkTitleInput(
                         supportingText = {
                             if (voiceHelper.isListening.value) {
                                 Text(
-                                    text = "Listening...",
+                                    text = stringResource(R.string.voice_input_listening),
                                     color = Color.Blue,
                                     style = MaterialTheme.typography.bodySmall
                                 )

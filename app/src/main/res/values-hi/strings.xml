@@ -71,6 +71,11 @@
     <!-- Buttons -->
     <string name="send_otp_button">OTP भेजें</string>
     <string name="verify_otp_button">OTP सत्यापित करें</string>
+    <string name="btn_continue">जारी रखें</string>
+    <string name="submit">जमा करें</string>
+    <string name="review">समीक्षा</string>
+    <string name="edit">संपादित करें</string>
+    <string name="confirm">पुष्टि करें</string>
 
     <!-- Snackbar / Messages -->
     <string name="login_success">लॉगिन सफल!</string>
@@ -80,6 +85,10 @@
     <string name="otp_sent">OTP %1$s पर भेजा गया</string>
     <string name="enter_valid_phone">मान्य फ़ोन नंबर दर्ज करें</string>
     <string name="verification_failed">सत्यापन विफल: %1$s</string>
+    <string name="snackbar_enter_location">कृपया अपना स्थान दर्ज करें</string>
+    <string name="snackbar_enter_name">कृपया अपना नाम दर्ज करें</string>
+    <string name="snackbar_error">कुछ गलत हो गया। कृपया पुनः प्रयास करें।</string>
+    <string name="snackbar_select_role">कृपया अपनी भूमिका चुनें</string>
 
     <!-- Countries -->
     <string name="country_india">भारत</string>
@@ -91,12 +100,16 @@
     <!-- Work Details / Cards -->
     <string name="by_farmer">%1$s द्वारा</string>
     <string name="workers_needed">%1$d मजदूरों की आवश्यकता</string>
+    <string name="workers_needed_description">यह काम करने के लिए कितने लोग चाहिए?</string>
+    <string name="workers_needed_error">कृपया मज़दूरों की संख्या दर्ज करें</string>
     <string name="location">स्थान</string>
     <string name="time_required">आवश्यक समय</string>
     <string name="days">%1$d दिन</string>
-    <string name="days_plural">%1$d दिन</string>
     <string name="land_area">भूमि क्षेत्र</string>
     <string name="acres">%1$.1f एकड़</string>
+    <string name="acres_description">भूमि क्षेत्र का आकार एकड़ में दर्ज करें।</string>
+    <string name="acres_error">कृपया सही एकड़ मान दर्ज करें</string>
+    <string name="acres_unit">एकड़</string>
     <string name="apply">आवेदन करें</string>
     <string name="view_applicants">आवेदकों को देखें</string>
 
@@ -109,6 +122,8 @@
     <string name="work_and_farmer_details">काम एवं किसान विवरण</string>
     <string name="work_title">काम का शीर्षक</string>
     <string name="days_required">आवश्यक दिन</string>
+    <string name="days_required_description">इस काम को पूरा करने में कितने दिन लगेंगे?</string>
+    <string name="days_required_error">कृपया दिनों की संख्या दर्ज करें</string>
     <string name="farmer_name">किसान का नाम</string>
     <string name="phone">फ़ोन</string>
     <string name="name">नाम</string>
@@ -117,4 +132,35 @@
     <string name="selected_status">चयनित</string>
     <string name="application_approved">आवेदन स्वीकृत</string>
     <string name="you_have_been_selected">आप %1$s के लिए चयनित किए गए हैं</string>
+
+    <!-- Profile Creation Screen -->
+    <string name="choose_role">अपनी भूमिका चुनें</string>
+    <string name="complete_your_profile">अपनी प्रोफ़ाइल पूरी करें</string>
+    <string name="detect_location">स्थान पहचानें</string>
+    <string name="detecting">पहचान की जा रही है...</string>
+    <string name="enter_full_name">अपना पूरा नाम दर्ज करें</string>
+    <string name="enter_location">अपना शहर दर्ज करें या पहचान की अनुमति दें</string>
+    <string name="error_location_empty">स्थान खाली नहीं हो सकता</string>
+    <string name="error_name_empty">नाम खाली नहीं हो सकता</string>
+    <string name="location_icon_desc">स्थान आइकन</string>
+    <string name="preview_location">📍 स्थान: %1$s</string>
+    <string name="preview_name">👤 नाम: %1$s</string>
+    <string name="preview_role">🧑‍🌾 भूमिका: %1$s</string>
+    <string name="profile_info">✅ प्रोफ़ाइल जानकारी:</string>
+    <string name="your_location">आपका स्थान</string>
+    <string name="your_name">आपका नाम</string>
+    <string name="show_less">कम दिखाएँ</string>
+    <string name="show_more">अधिक दिखाएँ</string>
+
+    <!-- Voice input -->
+    <string name="voice_input">वॉइस इनपुट</string>
+    <string name="voice_input_listening">सुन रहा है...</string>
+
+    <!-- Dropdown -->
+    <string name="expand">विस्तार करें</string>
+    <string name="collapse">सिकोड़ें</string>
+
+    <!-- Other -->
+    <string name="default_input_description">यह इनपुट है</string>
+    <string name="saving">सहेजा जा रहा है...</string>
 </resources>

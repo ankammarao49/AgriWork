@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -87,11 +88,12 @@ fun CreateProfileScreen(
                         Spacer(modifier = Modifier.height(24.dp))
                         Divider()
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text("✅ Profile Info:", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        Text(stringResource(R.string.profile_info), fontWeight = FontWeight.Bold, fontSize = 18.sp)
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text("👤 Name: $name", fontSize = 16.sp)
-                        Text("📍 Location: $location", fontSize = 16.sp)
-                        Text("🧑‍🌾 Role: ${role?.replaceFirstChar { it.uppercase() }}", fontSize = 16.sp)
+                        Text(stringResource(R.string.preview_name, name), fontSize = 16.sp)
+                        Text(stringResource(R.string.preview_location, location), fontSize = 16.sp)
+                        Text(stringResource(R.string.preview_role, role?.replaceFirstChar { it.uppercase() } ?: ""), fontSize = 16.sp)
+
                     }
                 }
 
@@ -159,7 +161,7 @@ fun ProfileInputSection(
     Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
 
         Text(
-            text = "Complete your profile",
+            text = stringResource(R.string.complete_your_profile),
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             fontFamily = Poppins
@@ -169,26 +171,25 @@ fun ProfileInputSection(
 
         // Name input
         CustomTextField(
-            label = "Your Name",
+            label = stringResource(R.string.your_name),
             value = name,
             onValueChange = onNameChange,
             icon = Icons.Default.Person,
             keyboardType = KeyboardType.Text,
-            description = "Enter your full name",
+            description = stringResource(R.string.enter_full_name),
             externalError = name.isBlank(),
-            externalErrorMessage = "Name cannot be empty"
+            externalErrorMessage = stringResource(R.string.error_name_empty)
         )
 
         // Location input
         CustomTextField(
-            label = "Your Location",
+            label = stringResource(R.string.your_location),
             value = location,
             onValueChange = onLocationChange,
             icon = Icons.Default.LocationOn,
             keyboardType = KeyboardType.Text,
-            description = "Enter your city or allow detection",
-            externalError = location.isBlank(),
-            externalErrorMessage = "Location cannot be empty"
+            description = stringResource(R.string.enter_location),
+            externalError = location.isBlank(), externalErrorMessage = stringResource(R.string.error_location_empty)
         )
 
         DetectLocationButton(
@@ -204,7 +205,7 @@ fun ProfileInputSection(
         )
 
         Text(
-            text = "Choose your role",
+            text = stringResource(R.string.choose_role),
             fontWeight = FontWeight.SemiBold,
             fontFamily = Poppins
         )
@@ -227,11 +228,11 @@ fun DetectLocationButton(isDetecting: Boolean, onClick: () -> Unit) {
     ) {
         Icon(
             imageVector = Icons.Default.LocationOn,
-            contentDescription = "Location Icon",
+            contentDescription = stringResource(R.string.location_icon_desc),
             modifier = Modifier.size(20.dp)
         )
         Spacer(modifier = Modifier.width(8.dp))
-        Text(if (isDetecting) "Detecting..." else "Detect Location")
+        Text(if (isDetecting) stringResource(R.string.detecting) else stringResource(R.string.detect_location))
     }
 }
 
@@ -316,16 +317,20 @@ fun SubmitProfileButton(
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val enterNameMsg = stringResource(R.string.snackbar_enter_name)
+    val enterLocationMsg = stringResource(R.string.snackbar_enter_location)
+    val selectRoleMsg = stringResource(R.string.snackbar_select_role)
+    val errorMsg = stringResource(R.string.snackbar_error)
 
     PrimaryButton(
-        text = "Continue",
+        text = stringResource(R.string.btn_continue),
         modifier = modifier,
         onClick = {
             coroutineScope.launch {
                 when {
-                    name.isBlank() -> snackbarHostState.showSnackbar("Please enter your name")
-                    location.isBlank() -> snackbarHostState.showSnackbar("Please enter your location")
-                    role == null -> snackbarHostState.showSnackbar("Please select your role")
+                    name.isBlank() -> snackbarHostState.showSnackbar(message = enterNameMsg)
+                    location.isBlank() -> snackbarHostState.showSnackbar(message = enterLocationMsg)
+                    role == null -> snackbarHostState.showSnackbar(message = selectRoleMsg)
                     else -> {
                         val userPhone = FirebaseAuth.getInstance().currentUser?.phoneNumber ?: return@launch
 
