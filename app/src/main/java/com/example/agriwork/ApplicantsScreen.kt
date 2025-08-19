@@ -58,6 +58,8 @@ import com.example.agriwork.ui.theme.Poppins
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestore
+import androidx.compose.ui.res.stringResource
+import com.example.agriwork.R
 
 @Composable
 fun ApplicantsScreen(workId: String, navController: NavHostController) {
@@ -112,10 +114,10 @@ fun ApplicantsScreen(workId: String, navController: NavHostController) {
             // 🔙 Back + Header
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color(0xFF113F67))
+                    Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back), tint = Color(0xFF113F67))
                 }
                 Text(
-                    text = "Applicants",
+                    text = stringResource(R.string.applicants),
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = Poppins
@@ -124,7 +126,9 @@ fun ApplicantsScreen(workId: String, navController: NavHostController) {
 
             // 👥 Count Text
             Text(
-                text = "Applied: ${applicants.size} | Selected: ${selectedApplicants.size} | Needed: ${work?.workersNeeded ?: "-"}",
+                text = "${stringResource(R.string.applied)}: ${applicants.size} | " +
+                        "${stringResource(R.string.selected)}: ${selectedApplicants.size} | " +
+                        "${stringResource(R.string.needed)}: ${work?.workersNeeded ?: "-"}",
                 fontSize = 14.sp,
                 fontFamily = Poppins,
                 color = Color.DarkGray,
@@ -147,7 +151,7 @@ fun ApplicantsScreen(workId: String, navController: NavHostController) {
                     .height(48.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                listOf("Applied", "Selected").forEach { tab ->
+                listOf(stringResource(R.string.applied), stringResource(R.string.selected)).forEach { tab ->
                     val isActive = tab == selectedTab
 
                     Box(
@@ -257,7 +261,7 @@ fun WorkAndFarmerCard(work: Work) {
 
             // Header
             Text(
-                text = "Work & Farmer Details",
+                text = stringResource(R.string.work_and_farmer_details),
                 fontFamily = Poppins,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 18.sp,
@@ -270,22 +274,22 @@ fun WorkAndFarmerCard(work: Work) {
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                TwoColumnRow("Work Title", work.workTitle)
+                TwoColumnRow(stringResource(R.string.work_title), work.workTitle)
                 Divider(color = Color(0xFFE0E0E0), thickness = 1.dp)
 
-                TwoColumnRow("Days Required", "${work.daysRequired}")
+                TwoColumnRow(stringResource(R.string.days_required), "${work.daysRequired}")
                 Divider(color = Color(0xFFE0E0E0), thickness = 1.dp)
 
-                TwoColumnRow("Acres", "${work.acres}")
+                TwoColumnRow(stringResource(R.string.acres), "${work.acres}")
                 Divider(color = Color(0xFFE0E0E0), thickness = 1.dp)
 
-                TwoColumnRow("Farmer Name", work.farmer.name)
+                TwoColumnRow(stringResource(R.string.farmer_name), work.farmer.name)
                 Divider(color = Color(0xFFE0E0E0), thickness = 1.dp)
 
-                TwoColumnRow("Location", work.farmer.location)
+                TwoColumnRow(stringResource(R.string.location), work.farmer.location)
                 Divider(color = Color(0xFFE0E0E0), thickness = 1.dp)
 
-                TwoColumnRow("Phone", work.farmer.mobileNumber)
+                TwoColumnRow(stringResource(R.string.phone), work.farmer.mobileNumber)
             }
         }
     }

@@ -82,12 +82,13 @@ fun WorkCategorySection(
                 imageVector = Icons.Default.ExpandMore,
                 contentDescription = null,
                 modifier = Modifier
-                    .size(20.dp)
+                    .size(18.dp)
                     .rotate(rotation)
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
                 text = if (showAll) "Show Less" else "Show More",
+                fontSize = 13.sp,
                 style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium)
             )
         }

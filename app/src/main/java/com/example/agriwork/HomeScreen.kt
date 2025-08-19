@@ -28,6 +28,7 @@ import com.example.agriwork.ui.components.PrimaryButton
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.ui.unit.sp
 import com.example.agriwork.ui.language.LanguageSelector
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -109,12 +110,12 @@ fun HomeScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 14.dp, vertical = 5.dp)
+                .padding(horizontal = 10.dp, vertical = 5.dp)
         ) {
             // Top App Bar as first scrollable item
             item {
                 TopAppBar(
-                    title = { Text(stringResource(id = R.string.home_title), modifier = Modifier.padding(start = 8.dp)) },
+                    title = { Text(stringResource(id = R.string.home_title), fontSize = 20.sp, modifier = Modifier.padding(start = 8.dp)) },
                     navigationIcon = {
                         IconButton(
                             onClick = {
@@ -128,7 +129,8 @@ fun HomeScreen(
                                 Icons.Default.Menu,
                                 contentDescription = stringResource(id = R.string.drawer_open),
                                 tint = Color.White,
-                                modifier = Modifier.size(25.dp))
+                                modifier = Modifier.size(25.dp)
+                            )
                         }
                     },
                     actions = {

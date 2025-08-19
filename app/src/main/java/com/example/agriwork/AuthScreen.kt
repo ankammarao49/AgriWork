@@ -1,19 +1,14 @@
 import android.app.Activity
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.agriwork.CountryCodeDialog
@@ -77,14 +72,11 @@ fun AuthScreen(
                 .imePadding(),
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.Start
-
-        )
-        {
+        ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.Start
-            )
-            {
+            ) {
                 Text(
                     text = stringResource(R.string.auth_title),
                     fontFamily = Poppins,
@@ -122,8 +114,8 @@ fun AuthScreen(
                         onValueChange = {
                             if (it.length <= 10) phoneNumber = it
                         },
-                        label = { Text("Phone Number") },
-                        keyboardOptions = KeyboardOptions.Default.copy(
+                        label = { Text(stringResource(R.string.phone_number_label)) },
+                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Phone
                         ),
                         singleLine = true,
@@ -139,13 +131,12 @@ fun AuthScreen(
                         onValueChange = {
                             if (it.length <= 6) otp = it
                         },
-                        label = { Text("Enter OTP") },
-                        keyboardOptions = KeyboardOptions.Default.copy(
+                        label = { Text(stringResource(R.string.enter_valid_otp)) },
+                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Number
                         ),
                         singleLine = true,
-                        modifier = Modifier
-                            .fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
 
@@ -185,20 +176,19 @@ fun AuthScreen(
                                     .addOnCompleteListener { task ->
                                         isLoading = false
                                         if (task.isSuccessful) {
-                                            message = "Login successful!"
+                                            message = context.getString(R.string.login_success)
                                             onLoginSuccess()
                                         } else {
-                                            message = "Invalid OTP or error occurred."
+                                            message = context.getString(R.string.invalid_otp_error)
                                         }
                                     }
                             } else {
-                                message = "Please enter valid 6-digit OTP"
+                                message = context.getString(R.string.enter_valid_otp)
                             }
                         },
                         enabled = !isLoading,
-                        text = "Verify OTP"
+                        text = stringResource(R.string.verify_otp_button)
                     )
-
                 } else {
                     PrimaryButton(
                         onClick = {
@@ -216,7 +206,9 @@ fun AuthScreen(
                                                     isLoading = false
                                                     if (task.isSuccessful) {
                                                         coroutineScope.launch {
-                                                            snackbarHostState.showSnackbar("Auto-login success!")
+                                                            snackbarHostState.showSnackbar(
+                                                                context.getString(R.string.auto_login_success)
+                                                            )
                                                         }
                                                         onLoginSuccess()
                                                     }
@@ -226,7 +218,12 @@ fun AuthScreen(
                                         override fun onVerificationFailed(e: FirebaseException) {
                                             isLoading = false
                                             coroutineScope.launch {
-                                                snackbarHostState.showSnackbar("Verification failed: ${e.localizedMessage}")
+                                                snackbarHostState.showSnackbar(
+                                                    context.getString(
+                                                        R.string.verification_failed,
+                                                        e.localizedMessage ?: ""
+                                                    )
+                                                )
                                             }
                                         }
 
@@ -238,7 +235,9 @@ fun AuthScreen(
                                             isOtpSent = true
                                             verificationId = verifId
                                             coroutineScope.launch {
-                                                snackbarHostState.showSnackbar("OTP sent to $phoneNumber")
+                                                snackbarHostState.showSnackbar(
+                                                    context.getString(R.string.otp_sent, phoneNumber)
+                                                )
                                             }
                                         }
                                     })
@@ -246,27 +245,17 @@ fun AuthScreen(
                                 PhoneAuthProvider.verifyPhoneNumber(options)
                             } else {
                                 coroutineScope.launch {
-                                    snackbarHostState.showSnackbar("Enter valid phone number")
+                                    snackbarHostState.showSnackbar(
+                                        context.getString(R.string.enter_valid_phone)
+                                    )
                                 }
                             }
                         },
                         enabled = !isLoading,
-                        text = "Send OTP"
+                        text = stringResource(R.string.send_otp_button)
                     )
                 }
-
             }
         }
-    }
-}
-
-@Preview(showBackground = true, name = "AuthScreen Preview")
-@Composable
-fun PreviewAuthScreen() {
-    AgriWorkTheme {
-        AuthScreen(
-            onLoginSuccess = {},
-            auth = FirebaseAuth.getInstance()
-        )
     }
 }

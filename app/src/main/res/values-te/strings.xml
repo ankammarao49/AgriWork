@@ -1,80 +1,120 @@
 <resources>
-
-    <!-- General -->
+    <!-- App Info -->
     <string name="app_name">AgriWork</string>
-    <string name="settings_sample_text">భాష మార్చడం సరిచూడడానికి ఇది ఒక నమూనా టెక్స్ట్.</string>
-    <string name="welcome_title">AgriWork కి స్వాగతం\n</string>
-    <string name="welcome_subtitle">రైతులను మరియు ఫీల్డ్ కార్మికులను కలిపి — గ్రామీణ జీవనోపాధులను అభివృద్ధి చేయడం</string>
-    <string name="get_started">ప్రారంభించండి</string>
-    <string name="home_title">హోమ్</string>
-    <string name="drawer_open">డ్రాయర్ తెరవండి</string>
+
+    <!-- General / Common -->
+    <string name="settings_sample_text">భాష మార్చడాన్ని పరీక్షించడానికి ఇది ఒక నమూనా టెక్స్ట్.</string>
     <string name="error_prefix">లోపం: %1$s</string>
-    <string name="data_load_failed">మీ డేటాను లోడ్ చేయలేము. దయచేసి మళ్లీ ప్రయత్నించండి.</string>
+    <string name="data_load_failed">మీ డేటా లోడ్ చేయలేకపోయాం. దయచేసి మళ్లీ ప్రయత్నించండి.</string>
+    <string name="loading">లోడ్ అవుతోంది…</string>
+    <string name="yes">అవును</string>
+    <string name="no">కాదు</string>
+    <string name="cancel">రద్దు</string>
+    <string name="back">వెనక్కి</string>
+
+    <!-- Welcome / Onboarding -->
+    <string name="welcome_title">AgriWork కు స్వాగతం</string>
+    <string name="welcome_subtitle">రైతులను ఫీల్డ్ కార్మికులతో కలుపుతూ — గ్రామీణ జీవనోపాధులను అభివృద్ధి చేయడం</string>
+    <string name="get_started">ప్రారంభించండి</string>
 
     <!-- Greetings -->
-    <string name="greeting_morning">శుభోదయం,\n%1$s</string>
-    <string name="greeting_afternoon">శుభ మధ్యాహ్నం,\n%1$s</string>
-    <string name="greeting_evening">శుభ సాయంత్రం,\n%1$s</string>
-    <string name="greeting_night">శుభ రాత్రి,\n%1$s</string>
+    <string name="greeting_morning">శుభోదయం</string>
+    <string name="greeting_afternoon">శుభ మద్యాహ్నం</string>
+    <string name="greeting_evening">శుభ సాయంత్రం</string>
+    <string name="greeting_night">శుభ రాత్రి</string>
+    <string name="greeting_generic">హలో</string>
+
+    <string name="subtitle_morning">ఈ రోజు ఫలప్రదంగా చేద్దాం!</string>
+    <string name="subtitle_afternoon">మీ రోజు బాగానే సాగుతుందని ఆశిస్తున్నాము!</string>
+    <string name="subtitle_evening">రోజు ముగింపు సమయం వచ్చింది?</string>
+    <string name="subtitle_generic">ఇంకా నిద్రపోలేదా? కాస్త విశ్రాంతి తీసుకోండి!</string>
+
+    <!-- Home Screens -->
+    <string name="home_title">హోమ్</string>
+    <string name="drawer_open">డ్రాయర్ తెరవండి</string>
 
     <!-- Farmer Home -->
     <string name="post_a_work">పని పోస్ట్ చేయండి</string>
-    <string name="work_categories_title">పనుల విభాగాలు</string>
+    <string name="work_categories_title">పని విభాగాలు</string>
 
     <!-- Worker Home -->
     <string name="find_a_work">పని కనుగొనండి</string>
 
     <!-- Work Categories -->
-    <string name="category_plowing">అరసల్</string>
-    <string name="category_sowing">విత్తనం</string>
-    <string name="category_weeding">తృణ తొలగించడం</string>
-    <string name="category_irrigation">నీరు పంచడం</string>
-    <string name="category_harvesting">పండించు</string>
-    <string name="category_fertilizer">ఎరువు</string>
-    <string name="category_fence_repair">వేగం మరమ్మత్తు</string>
-    <string name="category_planting">చేపట్టడం</string>
-    <string name="category_digging">వోకడం</string>
+    <string name="category_plowing">ఉజ్జాయింపు</string>
+    <string name="category_sowing">విత్తనాలు వేయడం</string>
+    <string name="category_weeding">మడుగులు తీయడం</string>
+    <string name="category_irrigation">పొలానికి నీరు పెట్టడం</string>
+    <string name="category_harvesting">పంట కోయడం</string>
+    <string name="category_fertilizer">ఎరువులు వేయడం</string>
+    <string name="category_fence_repair">కంచె మరమ్మతు</string>
+    <string name="category_planting">నాటడం</string>
+    <string name="category_digging">తవ్వడం</string>
     <string name="category_cutting">కత్తిరించడం</string>
-
-    <!-- Generic UI -->
-    <string name="loading">లోడ్ అవుతోంది…</string>
-    <string name="yes">అవును</string>
-    <string name="no">కాదు</string>
 
     <!-- User Profile -->
     <string name="profile">ప్రొఫైల్</string>
-    <string name="logout">లాగౌట్</string>
-    <string name="confirm_logout">లాగౌట్ నిర్ధారించండి</string>
-    <string name="logout_confirmation_message">మీరు నిజంగా లాగౌట్ కావాలనుకుంటున్నారా?</string>
-    <string name="cancel">రద్దు</string>
+    <string name="logout">లాగ్ అవుట్</string>
+    <string name="confirm_logout">లాగ్ అవుట్ నిర్ధారించండి</string>
+    <string name="logout_confirmation_message">మీరు లాగ్ అవుట్ కావాలనుకుంటున్నారా?</string>
 
-    <string name="auth_title">ప్రారంభిద్దాం!</string>
-    <string name="auth_subtitle">సరళీకరణ కోసం OTP పొందడానికి మీ మొబైల్ నంబర్ నమోదు చేయండి.</string>
+    <!-- Authentication -->
+    <string name="auth_title">మొదలుద్దాం!</string>
+    <string name="auth_subtitle">OTP ధృవీకరణ కోసం మీ మొబైల్ నంబర్ నమోదు చేయండి.</string>
+    <string name="role_farmer">రైతు</string>
+    <string name="role_worker">కూలీ</string>
 
     <!-- Labels -->
     <string name="phone_number_label">ఫోన్ నంబర్</string>
     <string name="otp_label">OTP నమోదు చేయండి</string>
 
     <!-- Buttons -->
-    <string name="send_otp_button">OTP పంపండి</string>
+    <string name="send_otp_button">OTP పంపించండి</string>
     <string name="verify_otp_button">OTP ధృవీకరించండి</string>
 
     <!-- Snackbar / Messages -->
-    <string name="login_success">లాగిన్ విజయవంతం!</string>
-    <string name="auto_login_success">ఆటో-లాగిన్ విజయవంతం!</string>
-    <string name="invalid_otp_error">చెల్లని OTP లేదా లోపం ఏర్పడింది.</string>
-    <string name="enter_valid_otp">సరైన 6-అంకెల OTPను నమోదు చేయండి</string>
-    <string name="enter_valid_phone">సరైన ఫోన్ నంబర్ నమోదు చేయండి</string>
+    <string name="login_success">లాగిన్ విజయవంతమైంది!</string>
+    <string name="auto_login_success">ఆటో లాగిన్ విజయవంతమైంది!</string>
+    <string name="invalid_otp_error">చెల్లని OTP లేదా లోపం జరిగింది.</string>
+    <string name="enter_valid_otp">దయచేసి సరైన 6 అంకెల OTP నమోదు చేయండి</string>
+    <string name="otp_sent">%1$s కు OTP పంపబడింది</string>
+    <string name="enter_valid_phone">చెల్లుబాటు అయ్యే ఫోన్ నంబర్ నమోదు చేయండి</string>
     <string name="verification_failed">ధృవీకరణ విఫలమైంది: %1$s</string>
 
-    <!-- Countries (optional if you want them localized) -->
+    <!-- Countries -->
     <string name="country_india">భారతదేశం</string>
     <string name="country_us">యునైటెడ్ స్టేట్స్</string>
-    <string name="country_uk">యునైటెడ్ కింగ్‌డమ్</string>
+    <string name="country_uk">యునైటెడ్ కింగ్డమ్</string>
     <string name="country_germany">జర్మనీ</string>
     <string name="country_australia">ఆస్ట్రేలియా</string>
 
-    <!-- Custom Farmers Sentence -->
-    <string name="farmers_work">రైతును మరియు రోజువారి పనులు చేసే వారిని కలపడం\nవ్యవసాయాన్ని అభివృద్ధి చేయడం</string>
+    <!-- Work Details / Cards -->
+    <string name="by_farmer">%1$s ద్వారా</string>
+    <string name="workers_needed">%1$d మంది కార్మికులు అవసరం</string>
+    <string name="location">ప్రదేశం</string>
+    <string name="time_required">అవసరమైన సమయం</string>
+    <string name="days">%1$d రోజు</string>
+    <string name="days_plural">%1$d రోజులు</string>
+    <string name="land_area">భూమి విస్తీర్ణం</string>
+    <string name="acres">%1$.1f ఎకరాలు</string>
+    <string name="apply">దరఖాస్తు చేయండి</string>
+    <string name="view_applicants">దరఖాస్తుదారులను చూడండి</string>
 
+    <!-- Applicants Section -->
+    <string name="applicants">దరఖాస్తుదారులు</string>
+    <string name="applied">దరఖాస్తు చేశారు</string>
+    <string name="selected">ఎంచుకోబడ్డారు</string>
+    <string name="needed">అవసరం</string>
+    <string name="no_applicants">%1$s దరఖాస్తుదారులు లేరు.</string>
+    <string name="work_and_farmer_details">పని &amp; రైతు వివరాలు</string>
+    <string name="work_title">పని శీర్షిక</string>
+    <string name="days_required">అవసరమైన రోజులు</string>
+    <string name="farmer_name">రైతు పేరు</string>
+    <string name="phone">ఫోన్</string>
+    <string name="name">పేరు</string>
+    <string name="mobile">మొబైల్</string>
+    <string name="approve">ఆమోదించండి</string>
+    <string name="selected_status">ఎంచుకోబడ్డారు</string>
+    <string name="application_approved">దరఖాస్తు ఆమోదించబడింది</string>
+    <string name="you_have_been_selected">మీరు %1$s కోసం ఎంపిక చేయబడ్డారు</string>
 </resources>

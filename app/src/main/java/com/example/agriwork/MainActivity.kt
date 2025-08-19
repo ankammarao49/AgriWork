@@ -34,7 +34,6 @@ import com.example.agriwork.data.repository.DataStorePreferenceRepository
 import com.example.agriwork.ui.language.DataStoreViewModelFactory
 import com.example.agriwork.ui.language.LanguageViewModel
 import com.example.agriwork.ui.screens.CreateWorkScreen
-import com.example.agriwork.ui.screens.SettingsScreen
 import com.example.agriwork.ui.theme.AgriWorkTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.FirebaseApp
@@ -156,10 +155,6 @@ fun AgriWorkAppContent(navController: NavHostController) {
             ApplicantsScreen(workId = workId, navController = navController)
         }
 
-        composable("settings") {
-            SettingsScreen()
-        }
-
     }
 }
 
@@ -195,6 +190,8 @@ class MainActivity : ComponentActivity() {
         }
 
         askNotificationPermission()
+        askMicPermission()
+
         createNotificationChannel()
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         FirebaseApp.initializeApp(this)
@@ -234,6 +231,22 @@ class MainActivity : ComponentActivity() {
 
         manager?.createNotificationChannel(channel)
     }
+
+    private val requestRecordAudioPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (!granted) {
+                // show message: "Mic permission required"
+            }
+        }
+
+    private fun askMicPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestRecordAudioPermission.launch(Manifest.permission.RECORD_AUDIO)
+        }
+    }
+
 
 }
 

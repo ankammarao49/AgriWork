@@ -26,6 +26,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.agriwork.ui.theme.Poppins
+import androidx.compose.ui.res.stringResource
+import com.example.agriwork.R
 
 @Composable
 fun WorkShowCard(
@@ -66,7 +68,7 @@ fun WorkShowCard(
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = "by $farmerName",
+                        text = stringResource(R.string.by_farmer, farmerName),
                         fontSize = 12.sp,
                         color = Color.Gray,
                         fontFamily = Poppins
@@ -79,7 +81,7 @@ fun WorkShowCard(
                     modifier = Modifier.padding(start = 8.dp)
                 ) {
                     Text(
-                        text = "$workersNeeded workers needed",
+                        text = stringResource(R.string.workers_needed, workersNeeded),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
@@ -93,11 +95,15 @@ fun WorkShowCard(
 
             // Detail Info Grid
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                DetailRow(label = "Location", value = location)
-                DetailRow(label = "Time Required", value = "$daysRequired day${if (daysRequired > 1) "s" else ""}")
-                DetailRow(label = "Land Area", value = "$acres acres") // Moved acres down here
-                DetailRow(label = "Applied", value = "$noOfWorkersApplied")
-                DetailRow(label = "Selected", value = "$noOfWorkersSelected")
+                DetailRow(label = stringResource(R.string.location), value = location)
+                DetailRow(
+                    label = stringResource(R.string.time_required),
+                    value = if (daysRequired > 1) stringResource(R.string.days_plural, daysRequired)
+                    else stringResource(R.string.days, daysRequired)
+                )
+                DetailRow(label = stringResource(R.string.land_area), value = stringResource(R.string.acres, acres))
+                DetailRow(label = stringResource(R.string.applied), value = "$noOfWorkersApplied")
+                DetailRow(label = stringResource(R.string.selected), value = "$noOfWorkersSelected")
             }
 
             Divider(color = Color(0xFFE0E0E0), thickness = 1.dp, modifier = Modifier.padding(vertical = 12.dp))
@@ -113,7 +119,7 @@ fun WorkShowCard(
                     shape = RoundedCornerShape(10.dp)
                 ) {
                     Text(
-                        text = "Apply",
+                        text = stringResource(R.string.apply),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
                         fontFamily = Poppins
@@ -133,7 +139,7 @@ fun WorkShowCard(
 
                 ) {
                     Text(
-                        text = "View Applicants",
+                        text = stringResource(R.string.view_applicants),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         fontFamily = Poppins,

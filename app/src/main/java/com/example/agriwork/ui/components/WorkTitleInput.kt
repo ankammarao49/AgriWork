@@ -1,9 +1,12 @@
 package com.example.agriwork.ui.components
 
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -27,6 +30,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material3.Card
@@ -41,16 +45,20 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -59,6 +67,13 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
+import com.example.agriwork.data.utils.VoiceInputHelper
+
+fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is android.content.ContextWrapper -> baseContext.findActivity()
+    else -> null
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,6 +87,14 @@ fun WorkTitleInput(
     errorMessage: String,
     description: String = "This is input",
 ) {
+    val context = LocalContext.current
+    val activity = context.findActivity() ?: return
+
+    // Use VoiceInputHelper
+    val voiceHelper = remember { VoiceInputHelper(activity) }
+    val targetScale = if (voiceHelper.isListening.value) 1f + (voiceHelper.rmsLevel.value / 10f) * 0.5f else 1f
+    val pulseScale by animateFloatAsState(targetValue = targetScale)
+
     val filteredSuggestions = remember(value, suggestions) {
         if (value.isNotEmpty()) {
             suggestions.filter {
@@ -93,6 +116,12 @@ fun WorkTitleInput(
 
     // Track if user typed anything at least once
     var hasTyped by remember { mutableStateOf(false) }
+
+    LaunchedEffect(voiceHelper.recognizedText.value) {
+        if (voiceHelper.recognizedText.value.isNotBlank()) {
+            onValueChange(voiceHelper.recognizedText.value)
+        }
+    }
 
     LaunchedEffect(value) {
         if (!hasTyped && value.isNotEmpty()) {
@@ -116,6 +145,13 @@ fun WorkTitleInput(
         showError -> Color(0xFFFFF5F5)
         value.isNotBlank() -> Color(0xFFF7FFF5)
         else -> Color(0xfff5f5f4)
+    }
+
+    // Cleanup always runs when composable is disposed
+    DisposableEffect(Unit) {
+        onDispose {
+            voiceHelper.destroy()
+        }
     }
 
 
@@ -161,22 +197,37 @@ fun WorkTitleInput(
                         placeholder = {},
                         leadingIcon = { Icon(icon, contentDescription = "$label icon", tint = Color.Black) },
                         trailingIcon = {
-                            IconButton(onClick = { expanded = !expanded }) {
-                                Icon(
-                                    modifier = Modifier.size(24.dp),
-                                    imageVector = if (expanded) Icons.Rounded.KeyboardArrowUp else Icons.Rounded.KeyboardArrowDown,
-                                    contentDescription = if (expanded) "Collapse" else "Expand",
-                                    tint = Color.Black
-                                )
+                            Row {
+                                IconButton(onClick = { voiceHelper.startListening() }, modifier = Modifier.scale(pulseScale)) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Mic,
+                                        contentDescription = "Voice Input",
+                                        tint = if (voiceHelper.isListening.value) Color.Blue else Color.Black
+                                    )
+                                }
+                                IconButton(onClick = { expanded = !expanded }) {
+                                    Icon(
+                                        modifier = Modifier.size(24.dp),
+                                        imageVector = if (expanded) Icons.Rounded.KeyboardArrowUp else Icons.Rounded.KeyboardArrowDown,
+                                        contentDescription = if (expanded) "Collapse" else "Expand",
+                                        tint = Color.Black
+                                    )
+                                }
                             }
                         },
                         prefix = {},
                         suffix = {},
                         supportingText = {
-                            if (showError) {
+                            if (voiceHelper.isListening.value) {
+                                Text(
+                                    text = "Listening...",
+                                    color = Color.Blue,
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            } else if (showError) {
                                 Row(
                                     modifier = Modifier,
-                                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
                                         text = errorMessage,
@@ -184,20 +235,20 @@ fun WorkTitleInput(
                                         style = MaterialTheme.typography.bodySmall,
                                     )
                                 }
-                            }
-                            else {
+                            } else {
                                 Row(
                                     modifier = Modifier,
-                                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
                                         text = description,
-                                        color = infoColor,
+                                        color = Color.Black,
                                         style = MaterialTheme.typography.bodySmall
                                     )
                                 }
                             }
-                        },
+                        }
+                        ,
                         contentPadding = OutlinedTextFieldDefaults.contentPadding(),
                         container = {
                             OutlinedTextFieldDefaults.Container(
@@ -223,29 +274,29 @@ fun WorkTitleInput(
             )
         }
 
-        if (expanded) {
+        // Dropdown with animation
+        AnimatedVisibility(
+            visible = expanded,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
             Card(
                 modifier = Modifier
                     .padding(vertical = 5.dp)
                     .width(textFieldSize.width.dp),
                 shape = RoundedCornerShape(10.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFFF0F0F0) // light gray, change as you want
+                    containerColor = Color(0xFFF0F0F0)
                 )
             ) {
-                LazyColumn(
-                    modifier = Modifier.heightIn(max = 150.dp),
-                ) {
-
+                LazyColumn(modifier = Modifier.heightIn(max = 150.dp)) {
                     items(filteredSuggestions) { title ->
                         ItemsCategory(title = title) { selected ->
                             onValueChange(selected)
                             expanded = false
                         }
                     }
-
                 }
-
             }
         }
     }

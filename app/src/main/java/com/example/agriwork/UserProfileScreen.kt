@@ -57,10 +57,17 @@ fun GreetingWithName(name: String) {
         in 5..11 -> R.string.greeting_morning
         in 12..16 -> R.string.greeting_afternoon
         in 17..20 -> R.string.greeting_evening
-        else -> R.string.greeting_night
+        else -> R.string.greeting_generic
+    }
+    val subtitleRes = when (currentHour) {
+        in 5..11 -> R.string.subtitle_morning
+        in 12..16 -> R.string.subtitle_afternoon
+        in 17..20 -> R.string.subtitle_evening
+        else -> R.string.subtitle_generic
     }
 
     val greeting = stringResource(id = greetingRes, name)
+    val subtitle = stringResource(id = subtitleRes)
 
     Column {
         Text(
@@ -70,13 +77,23 @@ fun GreetingWithName(name: String) {
             overflow = TextOverflow.Ellipsis,
             fontSize = 25.sp,
         )
-//        Text(
-//            text = name,
-//            fontFamily = Poppins,
-//            fontWeight = FontWeight.Bold,
-//            overflow = TextOverflow.Ellipsis,
-//            fontSize = 25.sp,
-//        )
+        Text(
+            text = name,
+            fontFamily = Poppins,
+            fontWeight = FontWeight.Bold,
+            overflow = TextOverflow.Ellipsis,
+            fontSize = 25.sp,
+        )
+        Spacer(modifier = Modifier.height(2.dp))
+
+        // Subtitle
+        Text(
+            text = subtitle,
+            fontFamily = Poppins,
+            fontWeight = FontWeight.Normal,
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
@@ -105,7 +122,8 @@ fun UserProfileDrawer(
                 Text(
                     stringResource(id = R.string.profile),
                     style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(bottom = 12.dp, start = 5.dp, top = 10.dp)
+                    modifier = Modifier.padding(bottom = 12.dp, start = 5.dp, top = 10.dp),
+                    fontSize = 20.sp,
                 )
 
                 Card(
@@ -120,7 +138,11 @@ fun UserProfileDrawer(
                             ProfileItem(icon = Icons.Default.LocationOn, label = it.location)
                             ProfileItem(
                                 icon = Icons.Default.AccountBox,
-                                label = it.role.replaceFirstChar { c -> c.uppercase() }
+                                label = when (it.role) {
+                                    "farmer" -> stringResource(R.string.role_farmer)
+                                    "worker" -> stringResource(R.string.role_worker)
+                                    else -> it.role
+                                }
                             )
                         } ?: Text(
                             stringResource(id = R.string.loading),

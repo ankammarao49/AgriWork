@@ -1,0 +1,120 @@
+<resources>
+    <!-- App Info -->
+    <string name="app_name">AgriWork</string>
+
+    <!-- General / Common -->
+    <string name="settings_sample_text">भाषा बदलने की जाँच करने के लिए यह एक नमूना टेक्स्ट है।</string>
+    <string name="error_prefix">त्रुटि: %1$s</string>
+    <string name="data_load_failed">आपका डेटा लोड नहीं हो सका। कृपया पुनः प्रयास करें।</string>
+    <string name="loading">लोड हो रहा है…</string>
+    <string name="yes">हाँ</string>
+    <string name="no">नहीं</string>
+    <string name="cancel">रद्द करें</string>
+    <string name="back">वापस</string>
+
+    <!-- Welcome / Onboarding -->
+    <string name="welcome_title">AgriWork में आपका स्वागत है</string>
+    <string name="welcome_subtitle">किसानों को फील्ड मजदूरों से जोड़ना — ग्रामीण आजीविका को सशक्त बनाना</string>
+    <string name="get_started">शुरू करें</string>
+
+    <!-- Greetings -->
+    <string name="greeting_morning">सुप्रभात</string>
+    <string name="greeting_afternoon">शुभ दोपहर</string>
+    <string name="greeting_evening">शुभ संध्या</string>
+    <string name="greeting_night">शुभ रात्रि</string>
+    <string name="greeting_generic">नमस्ते</string>
+
+    <string name="subtitle_morning">आइए आज को उत्पादक बनाएं!</string>
+    <string name="subtitle_afternoon">आशा है आपका दिन अच्छा जा रहा है!</string>
+    <string name="subtitle_evening">दिन समाप्त हो रहा है?</string>
+    <string name="subtitle_generic">अभी भी जाग रहे हो? आराम करें!</string>
+
+    <!-- Home Screens -->
+    <string name="home_title">होम</string>
+    <string name="drawer_open">ड्रॉअर खोलें</string>
+
+    <!-- Farmer Home -->
+    <string name="post_a_work">काम पोस्ट करें</string>
+    <string name="work_categories_title">काम की श्रेणियाँ</string>
+
+    <!-- Worker Home -->
+    <string name="find_a_work">काम खोजें</string>
+
+    <!-- Work Categories -->
+    <string name="category_plowing">हल चलाना</string>
+    <string name="category_sowing">बीज बोना</string>
+    <string name="category_weeding">निंदाई करना</string>
+    <string name="category_irrigation">सिंचाई करना</string>
+    <string name="category_harvesting">फसल काटना</string>
+    <string name="category_fertilizer">खाद डालना</string>
+    <string name="category_fence_repair">बाड़ की मरम्मत</string>
+    <string name="category_planting">रोपाई</string>
+    <string name="category_digging">खुदाई</string>
+    <string name="category_cutting">काटना</string>
+
+    <!-- User Profile -->
+    <string name="profile">प्रोफ़ाइल</string>
+    <string name="logout">लॉगआउट</string>
+    <string name="confirm_logout">लॉगआउट की पुष्टि करें</string>
+    <string name="logout_confirmation_message">क्या आप वाकई लॉगआउट करना चाहते हैं?</string>
+
+    <!-- Authentication -->
+    <string name="auth_title">चलिए शुरू करते हैं!</string>
+    <string name="auth_subtitle">सत्यापन के लिए OTP प्राप्त करने हेतु अपना मोबाइल नंबर दर्ज करें।</string>
+    <string name="role_farmer">किसान</string>
+    <string name="role_worker">मजदूर</string>
+
+    <!-- Labels -->
+    <string name="phone_number_label">फ़ोन नंबर</string>
+    <string name="otp_label">OTP दर्ज करें</string>
+
+    <!-- Buttons -->
+    <string name="send_otp_button">OTP भेजें</string>
+    <string name="verify_otp_button">OTP सत्यापित करें</string>
+
+    <!-- Snackbar / Messages -->
+    <string name="login_success">लॉगिन सफल!</string>
+    <string name="auto_login_success">ऑटो-लॉगिन सफल!</string>
+    <string name="invalid_otp_error">अमान्य OTP या कोई त्रुटि हुई।</string>
+    <string name="enter_valid_otp">कृपया मान्य 6 अंकों का OTP दर्ज करें</string>
+    <string name="otp_sent">OTP %1$s पर भेजा गया</string>
+    <string name="enter_valid_phone">मान्य फ़ोन नंबर दर्ज करें</string>
+    <string name="verification_failed">सत्यापन विफल: %1$s</string>
+
+    <!-- Countries -->
+    <string name="country_india">भारत</string>
+    <string name="country_us">संयुक्त राज्य</string>
+    <string name="country_uk">यूनाइटेड किंगडम</string>
+    <string name="country_germany">जर्मनी</string>
+    <string name="country_australia">ऑस्ट्रेलिया</string>
+
+    <!-- Work Details / Cards -->
+    <string name="by_farmer">%1$s द्वारा</string>
+    <string name="workers_needed">%1$d मजदूरों की आवश्यकता</string>
+    <string name="location">स्थान</string>
+    <string name="time_required">आवश्यक समय</string>
+    <string name="days">%1$d दिन</string>
+    <string name="days_plural">%1$d दिन</string>
+    <string name="land_area">भूमि क्षेत्र</string>
+    <string name="acres">%1$.1f एकड़</string>
+    <string name="apply">आवेदन करें</string>
+    <string name="view_applicants">आवेदकों को देखें</string>
+
+    <!-- Applicants Section -->
+    <string name="applicants">आवेदक</string>
+    <string name="applied">आवेदन किया</string>
+    <string name="selected">चयनित</string>
+    <string name="needed">आवश्यक</string>
+    <string name="no_applicants">%1$s आवेदक नहीं हैं।</string>
+    <string name="work_and_farmer_details">काम एवं किसान विवरण</string>
+    <string name="work_title">काम का शीर्षक</string>
+    <string name="days_required">आवश्यक दिन</string>
+    <string name="farmer_name">किसान का नाम</string>
+    <string name="phone">फ़ोन</string>
+    <string name="name">नाम</string>
+    <string name="mobile">मोबाइल</string>
+    <string name="approve">स्वीकृत करें</string>
+    <string name="selected_status">चयनित</string>
+    <string name="application_approved">आवेदन स्वीकृत</string>
+    <string name="you_have_been_selected">आप %1$s के लिए चयनित किए गए हैं</string>
+</resources>
