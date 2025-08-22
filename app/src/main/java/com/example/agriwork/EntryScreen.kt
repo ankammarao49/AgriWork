@@ -15,23 +15,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.agriwork.ui.components.PrimaryButton
 import com.example.agriwork.ui.theme.Poppins
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun EntryScreen(onGetStarted: () -> Unit) {
-    val systemUiController = rememberSystemUiController()
     val bgcolor = MaterialTheme.colorScheme.primary
     val textColor = Color.White
-
-    val context = LocalContext.current
-
-    // Set status bar color
-    SideEffect {
-        systemUiController.setStatusBarColor(
-            color = bgcolor,
-            darkIcons = false
-        )
-    }
 
     Box(
         modifier = Modifier

@@ -6,12 +6,16 @@
     <!-- ========== General / Common ========== -->
     <string name="back">Back</string>
     <string name="cancel">Cancel</string>
-    <string name="data_load_failed">Could not load your data. Please try again.</string>
+    <string name="confirm">Confirm</string>
+    <string name="edit">Edit</string>
     <string name="error_prefix">Error: %1$s</string>
     <string name="loading">Loading…</string>
     <string name="no">No</string>
-    <string name="settings_sample_text">This is a sample text to check language change.</string>
+    <string name="saving">Saving...</string>
+    <string name="submit">Submit</string>
+    <string name="review">Review</string>
     <string name="yes">Yes</string>
+    <string name="settings_sample_text">This is a sample text to check language change.</string>
 
     <!-- ========== Welcome / Onboarding ========== -->
     <string name="get_started">Get Started</string>
@@ -19,15 +23,16 @@
     <string name="welcome_title">Welcome to \nAgriWork</string>
 
     <!-- ========== Greetings ========== -->
+    <string name="greeting_morning">Good Morning</string>
     <string name="greeting_afternoon">Good Afternoon</string>
     <string name="greeting_evening">Good Evening</string>
-    <string name="greeting_generic">Hello</string>
-    <string name="greeting_morning">Good Morning</string>
     <string name="greeting_night">Good Night</string>
+    <string name="greeting_generic">Hello</string>
+
+    <string name="subtitle_morning">Let’s make today productive!</string>
     <string name="subtitle_afternoon">Hope your day is going great!</string>
     <string name="subtitle_evening">Winding down for the day?</string>
     <string name="subtitle_generic">Still up late? Take it easy!</string>
-    <string name="subtitle_morning">Let’s make today productive!</string>
 
     <!-- ========== Home Screens ========== -->
     <string name="drawer_open">Open Drawer</string>
@@ -50,6 +55,7 @@
 
     <!-- ========== Work Details / Cards ========== -->
     <string name="acres">%1$.1f acres</string>
+    <string name="acres_unit">acres</string>
     <string name="apply">Apply</string>
     <string name="by_farmer">by %1$s</string>
     <string name="days">%1$d day</string>
@@ -66,6 +72,7 @@
     <string name="workers_needed_error">Please enter the number of workers</string>
     <string name="work_and_farmer_details">Work &amp; Farmer Details</string>
     <string name="work_title">Work Title</string>
+    <string name="work_title_description">What is the name of the work?</string>
 
     <!-- ========== Applicants Section ========== -->
     <string name="applicants">Applicants</string>
@@ -142,47 +149,18 @@
     <string name="expand">Expand</string>
     <string name="collapse">Collapse</string>
 
-    <!-- ========== Misc ========== -->
+    <!-- ========== Misc / Errors ========== -->
     <string name="default_input_description">This is input</string>
     <string name="acres_description">Enter the size of the land area in acres.</string>
     <string name="acres_error">Please enter a valid acres value</string>
-    <string name="saving">Saving...</string>
-    <string name="submit">Submit</string>
-    <string name="review">Review</string>
-    <string name="acres_unit">acres</string>
-    <string name="edit">Edit</string>
-    <string name="confirm">Confirm</string>
-
-    <string name="post_work">Post a Work</string>
-    <string name="work_title_description">What is the name of the work?\n</string>
-    <string name="days_required">Days Required</string>
-    <string name="days_required_description">Number of days required for this work</string>
-    <string name="acres">Acres</string>
-    <string name="acres_description">Area in acres for the work</string>
-    <string name="workers_needed">Workers Needed</string>
-    <string name="workers_needed_description">Number of workers required</string>
-
-    <!-- Errors -->
     <string name="title_empty">Title cannot be empty</string>
     <string name="title_short">Title must have at least 3 characters</string>
-    <string name="days_required_error">Please enter number of days</string>
-    <string name="acres_error">Please enter valid area</string>
-    <string name="workers_needed_error">Please enter number of workers</string>
     <string name="form_incomplete">Please fill all fields correctly</string>
-    <string name="error_prefix">Error: %1$s</string>
 
-    <!-- Buttons -->
-    <string name="submit">Submit</string>
-    <string name="saving">Saving...</string>
-    <string name="edit">Edit</string>
-    <string name="confirm">Confirm</string>
-
-    <!-- Review Sheet -->
-    <string name="review">Review</string>
-    <string name="days">days</string>
-    <string name="acres_unit">acres</string>
-
-    <!-- Snackbar / Success / Failure -->
+    <!-- ========== Snackbar / Success / Failure ========== -->
     <string name="work_posted_success">Work posted successfully</string>
     <string name="work_posted_failure">Failed to post work: %1$s</string>
+    <string name="data_load_failed">Data load failed</string>
+
+    <string name="post_work">Post Work</string>
 </resources>

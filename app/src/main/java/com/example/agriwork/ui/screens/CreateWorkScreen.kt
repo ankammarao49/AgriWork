@@ -319,7 +319,7 @@ fun WorkForm(
                 } else {
                     scope.launch {
                         snackbarHostState.showSnackbar(
-                            message = stringResource(R.string.form_incomplete),
+                            message = context.getString(R.string.form_incomplete),
                             withDismissAction = true
                         )
                     }
@@ -361,7 +361,7 @@ fun WorkForm(
                             isSaving = false
                             showSheet = false
                             scope.launch {
-                                snackbarHostState.showSnackbar( message = context.getString(R.string.work_posted_success),
+                                snackbarHostState.showSnackbar( message = context.getString(R.string.work_posted_success))
                             }
                         },
                         onFailure = { error ->

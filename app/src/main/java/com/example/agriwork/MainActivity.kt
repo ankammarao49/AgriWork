@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresPermission
 import androidx.appcompat.app.AppCompatActivity
@@ -46,7 +47,7 @@ fun AgriWorkAppContent(navController: NavHostController) {
     val systemUiController = rememberSystemUiController()
 
     SideEffect {
-        systemUiController.setSystemBarsColor(color = Color.White, darkIcons = true)
+        systemUiController.setSystemBarsColor(color = Color.Transparent, darkIcons = true)
     }
 
     NavHost(navController = navController, startDestination = "entrydecider") {
@@ -161,6 +162,7 @@ fun AgriWorkAppContent(navController: NavHostController) {
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
 
         val repo = DataStorePreferenceRepository.getInstance(this)
         val languageViewModel = ViewModelProvider(
